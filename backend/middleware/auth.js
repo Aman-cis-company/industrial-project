@@ -1,0 +1,49 @@
+const jwt = require('jsonwebtoken');
+const { User } = require('../models');
+
+// Protect routes - Verify JWT Token
+exports.protect = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(' ')[1];
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_pmo_erp_platform_token');
+
+      // Get user from the token
+      req.user = await User.findByPk(decoded.id, {
+        attributes: { exclude: ['password'] }
+      });
+
+      if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
+      }
+
+      next();
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
+    }
+  } else {
+    return res.status(401).json({ success: false, message: 'Not authorized, no token' });
+  }
+};
+
+// Grant access to specific roles
+exports.authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `User role '${req.user ? req.user.role : 'Guest'}' is not authorized to access this route`
+      });
+    }
+    next();
+  };
+};

@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0F2A47;
+  --color-primary-hover: #173d66;
+  --color-primary-light: #F0F4F8;
+  
+  --color-accent: #0D9488; /* Teal CTA */
+  --color-accent-hover: #0F766E;
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-technical: 'IBM Plex Sans', sans-serif;
+}
+
+/* Smooth scrolling and transitions */
+html, body, #root {
+  height: 100%;
+}
+
+/* Clean scrollbar for modern visual appearance */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInDrawer {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+
