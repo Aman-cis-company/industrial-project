@@ -211,6 +211,35 @@ const seedDatabase = async () => {
       { workflowId: workflowCompleted.id, stepOrder: 1, approverId: userMap['pm.buildings@industrial-project.com'], approverRole: 'Project Manager', status: 'Approved', comments: 'Structural canopy loading calculations verified.', actionedAt: '2026-07-15T10:00:00.000Z' }
     ]);
 
+    // Active pending workflow for PMO Director review
+    const workflowPending = await ApprovalWorkflow.create({
+      projectId: 4,
+      phaseTrigger: 'Approval→Execution',
+      name: 'Diriyah Gate Substation Phase Gate: Approval ➔ Execution',
+      status: 'Pending'
+    });
+
+    await ApprovalStep.bulkCreate([
+      {
+        workflowId: workflowPending.id,
+        stepOrder: 1,
+        approverId: userMap['pm.buildings@industrial-project.com'],
+        approverRole: 'Project Manager',
+        status: 'Approved',
+        comments: 'Easements cleared by municipal planning teams.',
+        actionedAt: '2026-07-16T09:00:00.000Z'
+      },
+      {
+        workflowId: workflowPending.id,
+        stepOrder: 2,
+        approverId: userMap['director@industrial-project.com'],
+        approverRole: 'PMO Director',
+        status: 'Pending',
+        comments: null,
+        actionedAt: null
+      }
+    ]);
+
     console.log('🌱 Database seeding completed successfully.');
   } catch (error) {
     console.error('❌ Database seeding failed:', error);
