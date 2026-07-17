@@ -59,7 +59,7 @@ const AppLayout = () => {
     const fetchPendingApprovals = async () => {
       try {
         const token = localStorage.getItem('token');
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:9000/api';
         if (!token) return;
 
         const res = await fetch(`${apiUrl}/approvals/pending`, {
