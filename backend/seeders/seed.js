@@ -218,3 +218,7 @@ const seedDatabase = async () => {
 };
 
 module.exports = seedDatabase;
+
+if (require.main === module) {
+  seedDatabase();
+}
