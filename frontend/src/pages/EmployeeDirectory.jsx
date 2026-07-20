@@ -30,7 +30,10 @@ import {
   Building,
   Check,
   Building2,
-  UserCheck
+  UserCheck,
+  Radio,
+  Shield,
+  Wrench
 } from 'lucide-react';
 
 const DisciplineIcons = {
@@ -39,7 +42,11 @@ const DisciplineIcons = {
   BIM: Layers,
   WaterEnvironmental: Droplet,
   InteriorDesign: Palette,
-  HealthcarePlanning: Heart
+  HealthcarePlanning: Heart,
+  Piping: Wrench,
+  Instrumentation: Radio,
+  Corrosion: Shield,
+  HSE: UserCheck
 };
 
 const DisciplineColors = {
@@ -48,7 +55,11 @@ const DisciplineColors = {
   BIM: 'bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/30',
   WaterEnvironmental: 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30',
   InteriorDesign: 'bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/30',
-  HealthcarePlanning: 'bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/30'
+  HealthcarePlanning: 'bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/30',
+  Piping: 'bg-cyan-50 dark:bg-cyan-950/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/30',
+  Instrumentation: 'bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800/30',
+  Corrosion: 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/30',
+  HSE: 'bg-violet-50 dark:bg-violet-950/20 text-violet-700 dark:text-violet-400 border border-violet-200 dark:border-violet-800/30'
 };
 
 const EmployeeDirectory = () => {
@@ -319,27 +330,36 @@ const EmployeeDirectory = () => {
   const columns = [
     {
       header: 'Employee Name',
-      accessor: 'name',
+      accessor: 'user.name',
       sortable: true,
       render: (row) => (
-        <div
+        <div 
           className="flex items-center gap-3 cursor-pointer"
           onClick={() => {
             setSelectedEmployee(row);
             setIsDetailDrawerOpen(true);
           }}
         >
-          {row.user?.avatarUrl ? (
-            <img
-              src={row.user.avatarUrl}
-              alt={row.user.name}
-              className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-800"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-full bg-teal-500/10 text-teal-600 flex items-center justify-center font-bold text-sm">
-              {row.user?.name ? row.user.name.split(' ').map(n=>n[0]).join('').slice(0, 2) : 'EM'}
-            </div>
-          )}
+          <div className="relative shrink-0">
+            {row.user?.avatarUrl ? (
+              <img
+                src={row.user.avatarUrl}
+                alt={row.user.name}
+                className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-800"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-teal-500/10 text-teal-600 flex items-center justify-center font-bold text-sm">
+                {row.user?.name ? row.user.name.split(' ').map(n=>n[0]).join('').slice(0, 2) : 'EM'}
+              </div>
+            )}
+            <span className={`absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 ${
+              row.availabilityStatus === 'Available'
+                ? 'bg-emerald-500 animate-pulse'
+                : row.availabilityStatus === 'Busy'
+                ? 'bg-amber-500'
+                : 'bg-slate-450'
+            }`} title={`Status: ${row.availabilityStatus || 'Available'}`} />
+          </div>
           <div>
             <p className="font-semibold text-slate-900 dark:text-white leading-tight hover:underline">
               {row.user?.name}
@@ -358,7 +378,7 @@ const EmployeeDirectory = () => {
         return (
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${DisciplineColors[row.discipline] || ''}`}>
             <Icon className="w-3.5 h-3.5" />
-            {row.discipline === 'WaterEnvironmental' ? 'Water/Env' : row.discipline === 'HealthcarePlanning' ? 'Healthcare' : row.discipline === 'InteriorDesign' ? 'Interiors' : row.discipline}
+            {row.discipline === 'WaterEnvironmental' ? 'Water/Env' : row.discipline === 'HealthcarePlanning' ? 'Healthcare' : row.discipline === 'InteriorDesign' ? 'Interiors' : row.discipline === 'Piping' ? 'Piping & Pipeline' : row.discipline === 'Instrumentation' ? 'Leak Det. & Inst.' : row.discipline === 'Corrosion' ? 'Cathodic Prot.' : row.discipline === 'HSE' ? 'HSE & Compliance' : row.discipline}
           </span>
         );
       }
@@ -528,10 +548,9 @@ const EmployeeDirectory = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <PageHeader
-        title="Resources & Employee Directory"
-        breadcrumbs={['AeroPMO', 'Resources & Team']}
+        title="Field Staff & Crew Directory"
+        breadcrumbs={['PetroFlow', 'Crew Directory']}
         action={
           currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director'
             ? {
@@ -586,6 +605,10 @@ const EmployeeDirectory = () => {
               <option value="WaterEnvironmental">Water & Environmental</option>
               <option value="InteriorDesign">Interior Design</option>
               <option value="HealthcarePlanning">Healthcare Planning</option>
+              <option value="Piping">Piping & Pipeline</option>
+              <option value="Instrumentation">Leak Detection & Instrumentation</option>
+              <option value="Corrosion">Cathodic Protection & Corrosion</option>
+              <option value="HSE">HSE & Regulatory Compliance</option>
             </select>
 
             <select
@@ -889,6 +912,10 @@ const EmployeeDirectory = () => {
                 <option value="WaterEnvironmental">💧 Water & Environmental</option>
                 <option value="InteriorDesign">🎨 Interior Design</option>
                 <option value="HealthcarePlanning">🏥 Healthcare Planning</option>
+                <option value="Piping">🛠️ Piping & Pipeline Engineering</option>
+                <option value="Instrumentation">📡 Leak Detection & Instrumentation</option>
+                <option value="Corrosion">🛡️ Cathodic Protection & Corrosion</option>
+                <option value="HSE">📋 HSE & Regulatory Compliance</option>
               </select>
             </div>
           </div>

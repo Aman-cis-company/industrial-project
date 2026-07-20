@@ -13,14 +13,16 @@ import {
   HelpCircle,
   FileText,
   AlertTriangle,
-  Lightbulb
+  Lightbulb,
+  Clipboard
 } from 'lucide-react';
 
 const SuggestedPrompts = [
   { text: 'Which projects are at risk?', icon: AlertTriangle, color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/20' },
-  { text: 'Show me projects in Water Treatment', icon: Briefcase, color: 'text-teal-500 bg-teal-50 dark:bg-teal-950/20' },
+  { text: 'Show all segments with overdue inspections', icon: Clipboard, color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/20' },
+  { text: 'Show me gas transmission projects', icon: Briefcase, color: 'text-teal-500 bg-teal-50 dark:bg-teal-950/20' },
   { text: 'What is the most expensive project?', icon: Sparkles, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20' },
-  { text: 'Draft a proposal for NEOM Authority under BIM', icon: FileText, color: 'text-sky-500 bg-sky-50 dark:bg-sky-950/20' }
+  { text: 'Draft a proposal for GAIL under Gas Transmission', icon: FileText, color: 'text-sky-500 bg-sky-50 dark:bg-sky-950/20' }
 ];
 
 const AIAssistant = () => {
@@ -31,7 +33,7 @@ const AIAssistant = () => {
     {
       id: 1,
       sender: 'bot',
-      text: 'Hello! I am your PMO AI Copilot. I can query our active project registries, analyze risk profiles, and draft consulting proposals in real-time. What would you like to build or check today?',
+      text: 'Hello! I am your Pipeline AI Copilot. I can query our active pipeline projects, analyze safety risk profiles, check IoT telemetry alerts, and draft consulting proposals in real-time. What would you like to examine today?',
       timestamp: new Date()
     }
   ]);
@@ -156,8 +158,8 @@ const AIAssistant = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] space-y-4">
       <PageHeader
-        title="AI Copilot Assistant"
-        breadcrumbs={['AeroPMO', 'AI Assistant']}
+        title="Pipeline AI Copilot"
+        breadcrumbs={['PetroFlow', 'Pipeline AI Copilot']}
       />
 
       {/* Suggested prompts chips */}

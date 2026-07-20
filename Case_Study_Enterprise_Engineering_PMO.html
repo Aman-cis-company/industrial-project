@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PetroFlow — Enterprise Oil & Gas Pipeline PMO & Industrial Asset Management Platform Case Study</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      padding: 20mm 18mm 18mm 18mm;
+      position: relative;
+      background-color: #FFFFFF;
+      page-break-after: always;
+      page-break-inside: avoid;
+      overflow: hidden;
+    }
+
+    /* ==========================================
+       COVER PAGE STYLING (PAGE 1)
+       ========================================== */
+    .cover-page {
+      background-color: #1A1F2B;
+      color: #FFFFFF;
+      padding: 24mm 20mm 0 20mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cover-brand-logo {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+    }
+
+    .cover-brand-tagline {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #94A3B8;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .cover-case-tag {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      color: #C9843C; /* Amber Accent 1 */
+      text-transform: uppercase;
+      margin-top: 38px;
+    }
+
+    .cover-title {
+      font-size: 35px;
+      font-weight: 800;
+      line-height: 1.18;
+      color: #FFFFFF;
+      margin-top: 14px;
+      max-width: 95%;
+    }
+
+    .cover-subtitle {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #CBD5E1;
+      margin-top: 20px;
+      max-width: 92%;
+      font-weight: 400;
+    }
+
+    .cover-divider {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      margin-top: 32px;
+      margin-bottom: 32px;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      row-gap: 16px;
+      column-gap: 12px;
+      font-size: 11.5px;
+    }
+
+    .cover-meta-label {
+      color: #94A3B8;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .cover-meta-value {
+      color: #FFFFFF;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* 4-Column Bottom Stat Bar on Cover Page */
+    .cover-stat-bar {
+      margin-left: -20mm;
+      margin-right: -20mm;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: 72px;
+    }
+
+    .cover-stat-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8px 12px;
+    }
+
+    .cover-stat-col-1 { background-color: #C9843C; color: #FFFFFF; } /* Amber */
+    .cover-stat-col-2 { background-color: #14181F; color: #FFFFFF; } /* Dark Charcoal */
+    .cover-stat-col-3 { background-color: #2F7A5C; color: #FFFFFF; } /* Emerald */
+    .cover-stat-col-4 { background-color: #232838; color: #FFFFFF; } /* Slate Charcoal */
+
+    .cover-stat-num {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cover-stat-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      opacity: 0.92;
+    }
+
+
+    /* ==========================================
+       BODY PAGES HEADER & FOOTER (PAGES 2-4)
+       ========================================== */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 16px;
+      font-size: 9.5px;
+      color: #64748B;
+    }
+
+    .header-left {
+      font-weight: 500;
+    }
+
+    .header-right {
+      font-weight: 800;
+      color: #1A1F2B;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right span {
+      color: #C9843C;
+    }
+
+    .footer-bar {
+      position: absolute;
+      bottom: 12mm;
+      left: 18mm;
+      right: 18mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #E2E8F0;
+      font-size: 9px;
+      color: #64748B;
+    }
+
+    /* ==========================================
+       SECTION HEADERS & UI ELEMENTS
+       ========================================== */
+    .section-title-bar {
+      background-color: #1A1F2B;
+      color: #FFFFFF;
+      padding: 7px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      border-left: 4px solid #C9843C;
+    }
+
+    .section-title-bar span {
+      color: #C9843C;
+      margin-right: 6px;
+    }
+
+    p.body-text {
+      color: #334155;
+      font-size: 10.5px;
+      line-height: 1.55;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* Stat Highlight Cards Row (Page 2 Executive Summary) */
+    .stat-cards-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      color: #FFFFFF;
+    }
+
+    .stat-card-1 { background-color: #C9843C; }
+    .stat-card-2 { background-color: #1A1F2B; }
+    .stat-card-3 { background-color: #2F7A5C; }
+    .stat-card-4 { background-color: #232838; }
+
+    .stat-card-val {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.1;
+    }
+
+    .stat-card-lbl {
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-top: 3px;
+      opacity: 0.95;
+    }
+
+    /* What the Platform Replaces (2x2 Grid) */
+    .replaces-subtitle {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1E293B;
+      margin-top: 14px;
+      margin-bottom: 8px;
+    }
+
+    .replaces-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .replace-card {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .replace-card-head {
+      font-weight: 700;
+      color: #1E293B;
+      font-size: 10.5px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .replace-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #C9843C;
+      display: inline-block;
+    }
+
+    .replace-card-body {
+      color: #475569;
+      font-size: 9.8px;
+      line-height: 1.45;
+    }
+
+    /* Bullet Lists */
+    .bullet-list {
+      margin: 0 0 12px 0;
+      padding-left: 14px;
+    }
+
+    .bullet-list li {
+      color: #334155;
+      font-size: 10px;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .bullet-list li strong {
+      color: #1E293B;
+    }
+
+    /* Why It Mattered Callout Box */
+    .callout-box {
+      background-color: #FEF3C7;
+      border-left: 4px solid #C9843C;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .callout-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: #92400E;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .callout-body {
+      font-size: 9.8px;
+      color: #78350F;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      margin-bottom: 14px;
+      font-size: 9.5px;
+    }
+
+    .data-table th {
+      background-color: #232838;
+      color: #FFFFFF;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 8.5px;
+      letter-spacing: 0.8px;
+      padding: 7px 10px;
+      text-align: left;
+      border: 1px solid #232838;
+    }
+
+    .data-table td {
+      padding: 6.5px 10px;
+      border: 1px solid #E2E8F0;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .data-table tr:nth-child(even) td {
+      background-color: #F8FAFC;
+    }
+
+    .endpoint-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      background-color: #F1F5F9;
+      color: #475569;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #CBD5E1;
+      display: inline-block;
+    }
+
+    /* Core Module Deep Dive Items */
+    .module-sub-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1E293B;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    .formula-banner {
+      background-color: #1A1F2B;
+      color: #FFFFFF;
+      border-radius: 6px;
+      padding: 8px 14px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .formula-banner span {
+      color: #C9843C;
+    }
+
+    .deep-dive-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .deep-card {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 9px 12px;
+    }
+
+    .deep-card-title {
+      font-weight: 700;
+      color: #1E293B;
+      font-size: 10.2px;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .deep-card-body {
+      color: #475569;
+      font-size: 9.5px;
+      line-height: 1.45;
+    }
+
+    /* Role-Based Scoping Grid (Page 4) */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+    }
+
+    .role-card {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .role-title {
+      font-weight: 700;
+      color: #1E293B;
+      font-size: 10px;
+      margin-bottom: 2px;
+    }
+
+    .role-desc {
+      color: #64748B;
+      font-size: 8.8px;
+      line-height: 1.35;
+    }
+
+    /* Conclusion Box (Page 4) */
+    .conclusion-box {
+      background-color: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-left: 4px solid #1A1F2B;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      margin-top: 10px;
+      margin-bottom: 14px;
+    }
+
+    .conclusion-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: #1A1F2B;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .conclusion-body {
+      font-size: 9.8px;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .delivered-by {
+      text-align: right;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #1A1F2B;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       PAGE 1: COVER PAGE
+       ========================================================================= -->
+  <div class="page cover-page">
+    <div>
+      <div class="cover-brand-logo">CIS</div>
+      <div class="cover-brand-tagline">WE MAKE IT POSSIBLE!</div>
+
+      <div class="cover-case-tag">CASE STUDY</div>
+      <div class="cover-title">
+        PetroFlow — Enterprise Oil & Gas Pipeline PMO & Industrial Asset Management Platform
+      </div>
+      <div class="cover-subtitle">
+        Unified PMO governance, specialist workload heatmaps, P&ID drawing version control, AI-assisted proposal reporting, and SCADA pipeline telemetry — integrated into a single digital system of record.
+      </div>
+
+      <div class="cover-divider"></div>
+
+      <div class="cover-meta-grid">
+        <div class="cover-meta-label">CLIENT</div>
+        <div class="cover-meta-value">National Energy & Infrastructure Operations Enterprise</div>
+
+        <div class="cover-meta-label">INDUSTRY</div>
+        <div class="cover-meta-value">Oil & Gas Infrastructure, Pipeline Engineering & Industrial Asset Management</div>
+
+        <div class="cover-meta-label">SOLUTION</div>
+        <div class="cover-meta-value">PetroFlow Industrial PMO, Asset Telemetry & Compliance Suite</div>
+
+        <div class="cover-meta-label">PREPARED BY</div>
+        <div class="cover-meta-value">Vishal N Team · Cyber Infrastructure Pvt. Ltd.</div>
+      </div>
+    </div>
+
+    <!-- 4-Column Bottom Stat Highlight Bar -->
+    <div class="cover-stat-bar">
+      <div class="cover-stat-col cover-stat-col-1">
+        <div class="cover-stat-num">9</div>
+        <div class="cover-stat-lbl">SERVICE CATEGORIES UNIFIED</div>
+      </div>
+      <div class="cover-stat-col cover-stat-col-2">
+        <div class="cover-stat-num">100%</div>
+        <div class="cover-stat-lbl">DIGITAL APPROVAL TRAIL</div>
+      </div>
+      <div class="cover-stat-col cover-stat-col-3">
+        <div class="cover-stat-num">AI</div>
+        <div class="cover-stat-lbl">COPILOT & AUTOMATION</div>
+      </div>
+      <div class="cover-stat-col cover-stat-col-4">
+        <div class="cover-stat-num">LIVE</div>
+        <div class="cover-stat-lbl">SPECIALIST WORKFORCE HEATMAP</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       PAGE 2: EXECUTIVE SUMMARY & CLIENT PROFILE
+       ========================================================================= -->
+  <div class="page">
+    <div class="header-bar">
+      <div class="header-left">PetroFlow · Oil & Gas Pipeline PMO & Asset Platform · Confidential</div>
+      <div class="header-right">CIS <span>WE MAKE IT POSSIBLE!</span></div>
+    </div>
+
+    <div class="section-title-bar">
+      1. Executive Summary
+    </div>
+
+    <p class="body-text">
+      <strong>PetroFlow</strong> delivers end-to-end PMO and industrial asset operations for major energy infrastructure projects including regional refinery HVAC refits, subsea power grid integrations, and high-pressure gas transmission pipelines. Before this engagement, operations ran on fragmented Excel workbooks, disconnected email approval trails, and unmonitored safety risk logs — leaving executive leadership without real-time visibility into project health, specialist workload allocations, or regulatory HSE compliance.
+    </p>
+    <p class="body-text">
+      Cyber Infrastructure Pvt. Ltd. engineered <strong>PetroFlow</strong> — a unified, full-stack industrial engineering PMO platform that integrates executive BI dashboards, specialist capacity heatmaps, P&ID drawing version control (v1, v2, v3), AI-assisted proposal reporting, and a SCADA pipeline telemetry extension into one central system of record.
+    </p>
+
+    <!-- Stat Highlight Cards -->
+    <div class="stat-cards-row">
+      <div class="stat-card stat-card-1">
+        <div class="stat-card-val">9</div>
+        <div class="stat-card-lbl">DISCIPLINES UNIFIED</div>
+      </div>
+      <div class="stat-card stat-card-2">
+        <div class="stat-card-val">100%</div>
+        <div class="stat-card-lbl">DIGITAL APPROVAL TRAIL</div>
+      </div>
+      <div class="stat-card stat-card-3">
+        <div class="stat-card-val">AI</div>
+        <div class="stat-card-lbl">COPILOT & AUTOMATION</div>
+      </div>
+      <div class="stat-card stat-card-4">
+        <div class="stat-card-val">LIVE</div>
+        <div class="stat-card-lbl">RESOURCE ALLOCATION</div>
+      </div>
+    </div>
+
+    <div class="replaces-subtitle">What the Platform Replaces</div>
+
+    <div class="replaces-grid">
+      <div class="replace-card">
+        <div class="replace-card-head"><span class="replace-dot"></span> Manual Excel Project Tracking</div>
+        <div class="replace-card-body">Replaced three daily disconnected status spreadsheets with a centralized Executive BI Portfolio dashboard (<span class="endpoint-code">/dashboard</span>) tracking SAR/INR budgets, milestones, and project status.</div>
+      </div>
+      <div class="replace-card">
+        <div class="replace-card-head"><span class="replace-dot"></span> Paper-Based Approvals</div>
+        <div class="replace-card-body">Transformed manual sign-off delays into a multi-stage Digital Approval Workflow engine (<span class="endpoint-code">/approvals</span>) with time-stamped audit logs and instant status transitions.</div>
+      </div>
+      <div class="replace-card">
+        <div class="replace-card-head"><span class="replace-dot"></span> Scattered Drawing Versioning</div>
+        <div class="replace-card-body">Unified P&ID drawings, CAD models, and BIM specs into a version-controlled DMS (<span class="endpoint-code">/documents</span>) supporting v1, v2, v3 drawing revisions with instant browser preview.</div>
+      </div>
+      <div class="replace-card">
+        <div class="replace-card-head"><span class="replace-dot"></span> Informal Risk Tracking</div>
+        <div class="replace-card-body">Replaced unmonitored risk logs with a scored Safety Risk Register (<span class="endpoint-code">/risks</span>) evaluating Severity × Likelihood alongside HSE compliance audit checklists.</div>
+      </div>
+    </div>
+
+    <div class="section-title-bar">
+      2. Client Profile & Legacy Pain Points
+    </div>
+
+    <p class="body-text">
+      PetroFlow manages oil and gas engineering projects across <strong>Gas Transmission Pipelines, Refinery HVAC Systems, Subsea Grid Integration, P&ID Schematics, and Safety Compliance</strong>. Operational volume expansion across multi-regional field sites introduced critical bottlenecks:
+    </p>
+
+    <ul class="bullet-list">
+      <li><strong>Refinery & Pipeline Blind Spots:</strong> Lack of real-time visibility forced executive management to evaluate facility performance only after shift ends or milestone deadlines passed.</li>
+      <li><strong>Specialist Overallocation:</strong> Piping and mechanical engineers were assigned without workload capacity tracking, leading to undetected burnout (>100% capacity) and scheduling delays.</li>
+      <li><strong>P&ID Version Conflicts:</strong> Technical drawings and schematics were shared via email, leading to conflicting drawing revisions on field construction sites.</li>
+      <li><strong>Unmonitored Safety Risks:</strong> Environmental compliance, gas pressure breaches, and budget overruns were tracked manually, preventing proactive mitigation before critical audits.</li>
+    </ul>
+
+    <div class="callout-box">
+      <div class="callout-title">WHY IT MATTERED</div>
+      <div class="callout-body">
+        Without a unified digital intelligence layer, each engineering discipline operated as an isolated island — preventing real-time portfolio comparison, resource leveling, and cross-project HSE compliance auditing.
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <div>Vishal N Team · Cyber Infrastructure · Case Study</div>
+      <div>Page 2</div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       PAGE 3: SOLUTION ARCHITECTURE & DEEP DIVE
+       ========================================================================= -->
+  <div class="page">
+    <div class="header-bar">
+      <div class="header-left">PetroFlow · Oil & Gas Pipeline PMO & Asset Platform · Confidential</div>
+      <div class="header-right">CIS <span>WE MAKE IT POSSIBLE!</span></div>
+    </div>
+
+    <div class="section-title-bar">
+      3. Solution Architecture
+    </div>
+
+    <p class="body-text">
+      Cyber Infrastructure Pvt. Ltd. engineered PetroFlow as a modular, full-stack PMO and manufacturing intelligence platform, purpose-built to unify multi-discipline engineering operations into a single source of operational truth.
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 25%;">MODULE</th>
+          <th style="width: 58%;">CAPABILITIES</th>
+          <th style="width: 17%;">ENDPOINT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Executive Portfolio Dashboard</strong></td>
+          <td>Consolidated 9-discipline project health index; live budget vs. spent tracking; AI executive summaries; 90-day progress trends.</td>
+          <td><span class="endpoint-code">/dashboard</span></td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline PMO & Projects</strong></td>
+          <td>Multi-phase deliverable tracking (Design, Approval, Execution, Handover); milestone schedules; role-gated task priority controls.</td>
+          <td><span class="endpoint-code">/projects</span></td>
+        </tr>
+        <tr>
+          <td><strong>Specialist Heatmap & Crew</strong></td>
+          <td>Workload allocation % (0–100%+); overallocation alert badges; discipline filtering & Field Staff Directory.</td>
+          <td><span class="endpoint-code">/workforce</span></td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline DMS Drawings</strong></td>
+          <td>Version-controlled P&ID drawing registry (v1, v2, v3); discipline tagging; OCR smart search; in-browser PDF/drawing preview.</td>
+          <td><span class="endpoint-code">/documents</span></td>
+        </tr>
+        <tr>
+          <td><strong>Safety Risks & Compliance</strong></td>
+          <td>Scored risk matrix (Severity × Likelihood); mitigation tracking; HSE regulatory compliance checklists.</td>
+          <td><span class="endpoint-code">/risks</span></td>
+        </tr>
+        <tr>
+          <td><strong>Workflow Automation</strong></td>
+          <td>Multi-stage digital sign-off workflows; step-by-step approval trails; automated status updates.</td>
+          <td><span class="endpoint-code">/approvals</span></td>
+        </tr>
+        <tr>
+          <td><strong>Client CRM & Proposals</strong></td>
+          <td>Bidding pipeline & lead tracking; contract value management; AI-assisted proposal generator.</td>
+          <td><span class="endpoint-code">/proposals</span></td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline AI Copilot</strong></td>
+          <td>Natural language database query engine; automated project health summaries; risk mitigation advisor.</td>
+          <td><span class="endpoint-code">/ai-assistant</span></td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline IoT & Telemetry</strong></td>
+          <td>Live SCADA pressure/flow telemetry map; segment degradation grid; predictive maintenance alerts & incident control desk.</td>
+          <td><span class="endpoint-code">/pipeline/map</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title-bar">
+      4. Core Module Deep Dive
+    </div>
+
+    <div class="module-sub-title">A. Executive Control Tower & Live Project Health</div>
+    <p class="body-text" style="margin-bottom: 6px;">
+      Executive leadership receives a side-by-side comparison of active engineering projects across regional refinery refits, subsea grids, and transmission pipelines. Project health is calculated in real time:
+    </p>
+
+    <div class="formula-banner">
+      Project Health = <span>Budget Efficiency</span> × <span>Schedule Compliance</span> × <span>Risk Index</span>
+    </div>
+
+    <div class="deep-dive-grid">
+      <div class="deep-card">
+        <div class="deep-card-title"><span class="replace-dot"></span> B. Safety Risk Matrix & HSE Compliance</div>
+        <div class="deep-card-body">
+          Continuous risk score evaluation against project milestones. When high-severity risks emerge, PetroFlow automatically links regulatory HSE compliance checklists and alerts designated PMO Directors.
+        </div>
+      </div>
+
+      <div class="deep-card">
+        <div class="deep-card-title"><span class="replace-dot"></span> C. PetroFlow AI Copilot & Natural Queries</div>
+        <div class="deep-card-body">
+          Natural language AI engine processes queries against live database tables (e.g., "Which projects are At-Risk?") and automatically generates bid proposals and executive summaries.
+        </div>
+      </div>
+    </div>
+
+    <div class="deep-card" style="margin-top: 6px;">
+      <div class="deep-card-title"><span class="replace-dot"></span> D. SCADA Telemetry & Predictive Maintenance</div>
+      <div class="deep-card-body">
+        Provides real-time IoT and SCADA monitoring for pipeline assets. Tracks pressure (bar/PSI) and flow rates, ranks high-wear pipeline segments, and dispatches automated work orders to field crews before failure occurs.
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <div>Vishal N Team · Cyber Infrastructure · Case Study</div>
+      <div>Page 3</div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       PAGE 4: TECH STACK, RBAC & CONCLUSION
+       ========================================================================= -->
+  <div class="page">
+    <div class="header-bar">
+      <div class="header-left">PetroFlow · Oil & Gas Pipeline PMO & Asset Platform · Confidential</div>
+      <div class="header-right">CIS <span>WE MAKE IT POSSIBLE!</span></div>
+    </div>
+
+    <div class="section-title-bar">
+      5. Technology Stack & Role Scoping
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 30%;">LAYER</th>
+          <th style="width: 70%;">TECHNOLOGIES & TOOLS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend Framework</strong></td>
+          <td>React 18, React Router v6, Vite</td>
+        </tr>
+        <tr>
+          <td><strong>Styling & Design System</strong></td>
+          <td>Vanilla CSS, TailwindCSS, Lucide Icons, Glassmorphic UI & Dark Mode</td>
+        </tr>
+        <tr>
+          <td><strong>Data Visualization</strong></td>
+          <td>Recharts (Financial trends, risk distribution, specialist utilization heatmaps)</td>
+        </tr>
+        <tr>
+          <td><strong>Backend API Engine</strong></td>
+          <td>Node.js, Express.js (RESTful Architecture, JWT Auth, Multer Disk Storage)</td>
+        </tr>
+        <tr>
+          <td><strong>Database & ORM</strong></td>
+          <td>SQLite / MySQL with Sequelize ORM — 12 Relational Data Models</td>
+        </tr>
+        <tr>
+          <td><strong>AI Integration</strong></td>
+          <td>Natural Language Query Engine + LLM API Connectors (OpenAI / Gemini SDK)</td>
+        </tr>
+        <tr>
+          <td><strong>Document Processing</strong></td>
+          <td>Multer Disk Storage, File System Static Streaming, Smart OCR Search</td>
+        </tr>
+        <tr>
+          <td><strong>Containerization & Infra</strong></td>
+          <td>Docker & Docker Compose orchestrating Express Backend, React Client, Database</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="replaces-subtitle" style="margin-top: 10px;">Role-Based Access Control Scoping</div>
+
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-title">PMO Director</div>
+        <div class="role-desc">Full portfolio oversight, budget approvals, and global task priority management</div>
+      </div>
+      <div class="role-card">
+        <div class="role-title">Project Manager</div>
+        <div class="role-desc">Project creation, deliverable scheduling, risk mitigation, and team allocation</div>
+      </div>
+      <div class="role-card">
+        <div class="role-title">Specialist Engineer</div>
+        <div class="role-desc">Task execution, P&ID revision uploads, and status logging</div>
+      </div>
+      <div class="role-card">
+        <div class="role-title">Field Inspector</div>
+        <div class="role-desc">Telemetry monitoring, inspection audit logging, and incident reports</div>
+      </div>
+      <div class="role-card">
+        <div class="role-title">Finance Lead</div>
+        <div class="role-desc">Commercial proposal approval, contract value tracking, and budget auditing</div>
+      </div>
+      <div class="role-card">
+        <div class="role-title">System Admin</div>
+        <div class="role-desc">Role management, system configuration, user provisioning, and audit logs</div>
+      </div>
+    </div>
+
+    <div class="section-title-bar">
+      6. Metrics & Conclusion
+    </div>
+
+    <ul class="bullet-list" style="margin-bottom: 10px;">
+      <li><strong>Multi-Discipline Engineering & Infrastructure Support:</strong> Unified coverage across Refinery Refit, Subsea Grid Integration, and Gas Transmission lines.</li>
+      <li><strong>100% Digital Approval & Audit Trail:</strong> Replaced manual paper approvals with time-stamped digital workflows and version-controlled DMS logs.</li>
+      <li><strong>Live SCADA Telemetry & Predictive Maintenance:</strong> Continuous sensor streaming for pipeline pressure, flow rates, and segment degradation alerts.</li>
+      <li><strong>Role-Based Access Across 6 User Types:</strong> Scoped permissions from PMO Directors down to Field Inspectors and Technical Specialists.</li>
+    </ul>
+
+    <div class="conclusion-box">
+      <div class="conclusion-title">7. CONCLUSION</div>
+      <div class="conclusion-body">
+        The PetroFlow platform replaces a patchwork of spreadsheets and manual paper approval trails with a single connected digital operations layer. Built on a modern full-stack architecture with AI integration at its core, PetroFlow gives engineering consultancies and oil & gas operators a scalable foundation to manage complex project portfolios, enforce HSE compliance, and optimize workforce allocation.
+      </div>
+    </div>
+
+    <div class="delivered-by">
+      DELIVERED BY: Vishal N Team · Cyber Infrastructure Pvt. Ltd.
+    </div>
+
+    <div class="footer-bar">
+      <div>Vishal N Team · Cyber Infrastructure · Case Study</div>
+      <div>Page 4</div>
+    </div>
+  </div>
+
+</body>
+</html>

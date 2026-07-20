@@ -69,7 +69,7 @@ npm run dev
 
 The application will launch on:
 - **Frontend Console**: `http://localhost:5173`
-- **Backend API**: `http://localhost:5000`
+- **Backend API**: `http://localhost:6000`
 
 ---
 

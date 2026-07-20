@@ -117,6 +117,10 @@ router.put('/:id', protect, async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized to update this task' });
     }
 
+    if (req.body.priority !== undefined && !isAdminOrDirector) {
+      return res.status(403).json({ success: false, message: 'Only Admin and PMO Director can change task priority' });
+    }
+
     if (isAssignee && !isAdminOrDirector && !isManager) {
       // Assignee can only update status
       const { status } = req.body;

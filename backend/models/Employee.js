@@ -23,7 +23,11 @@ const Employee = sequelize.define('Employee', {
       'BIM',
       'WaterEnvironmental',
       'InteriorDesign',
-      'HealthcarePlanning'
+      'HealthcarePlanning',
+      'Piping',
+      'Instrumentation',
+      'Corrosion',
+      'HSE'
     ),
     allowNull: false
   },

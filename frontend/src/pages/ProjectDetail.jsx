@@ -41,7 +41,8 @@ import {
   Sliders,
   ShieldCheck,
   Award,
-  GitCommit
+  GitCommit,
+  ExternalLink
 } from 'lucide-react';
 
 const TaskPriorityColors = {
@@ -171,6 +172,8 @@ const ProjectDetail = () => {
           currentPhase: projData.data.currentPhase,
           status: projData.data.status
         });
+      } else {
+        throw new Error(projData.message || 'Failed to load project');
       }
       if (empData.success) {
         setEmployees(empData.data);
@@ -181,10 +184,10 @@ const ProjectDetail = () => {
       const mockProjectsList = [
         { 
           id: 1, 
-          name: 'NEOM Spine Tunnel Structural Design', 
-          clientName: 'NEOM Authority', 
-          serviceCategory: 'Buildings', 
-          description: 'Detailed structural design and load analysis for the deep structural concrete tunnel segments under the central Spine infrastructure.', 
+          name: 'GAIL Hazira-Vijaipur-Jagdishpur (HVJ) Pipeline Expansion', 
+          clientName: 'GAIL (India) Limited', 
+          serviceCategory: 'PipelineTransmission', 
+          description: 'Detailed expansion design of the major trunk line and control valves.', 
           budget: 45000000.00, 
           budgetSpent: 12500000.00, 
           startDate: '2026-01-10', 
@@ -463,7 +466,7 @@ const ProjectDetail = () => {
     }
   };
 
-  const handleUpdateTaskStatus = async (taskId, nextStatus) => {
+  const handleUpdateTask = async (taskId, updates) => {
     try {
       const res = await fetch(`${apiUrl}/tasks/${taskId}`, {
         method: 'PUT',
@@ -471,14 +474,14 @@ const ProjectDetail = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ status: nextStatus })
+        body: JSON.stringify(updates)
       });
       const data = await res.json();
       if (data.success) {
-        addToast('Task status updated', 'success');
+        addToast('Task updated successfully', 'success');
         fetchProjectDetails();
         if (selectedTask && selectedTask.id === taskId) {
-          setSelectedTask(prev => ({ ...prev, status: nextStatus }));
+          setSelectedTask(prev => ({ ...prev, ...updates }));
         }
       } else {
         throw new Error(data.message);
@@ -486,14 +489,17 @@ const ProjectDetail = () => {
     } catch (err) {
       setProject(prev => ({
         ...prev,
-        tasks: prev.tasks.map(t => t.id === taskId ? { ...t, status: nextStatus } : t)
+        tasks: prev.tasks.map(t => t.id === taskId ? { ...t, ...updates } : t)
       }));
-      addToast('Task status updated (Demo)', 'success');
+      addToast('Task updated (Demo)', 'success');
       if (selectedTask && selectedTask.id === taskId) {
-        setSelectedTask(prev => ({ ...prev, status: nextStatus }));
+        setSelectedTask(prev => ({ ...prev, ...updates }));
       }
     }
   };
+
+  const handleUpdateTaskStatus = (taskId, nextStatus) => handleUpdateTask(taskId, { status: nextStatus });
+  const handleUpdateTaskPriority = (taskId, nextPriority) => handleUpdateTask(taskId, { priority: nextPriority });
 
   const handleDeleteTask = async (taskId) => {
     try {
@@ -610,6 +616,50 @@ const ProjectDetail = () => {
       setUploadForm({ discipline: 'General', description: '' });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleOpenDocFile = (filePath, fileName = '') => {
+    if (!filePath || filePath === '#') {
+      addToast('Demo record - no file uploaded for this fallback item', 'info');
+      return;
+    }
+    const backendBase = apiUrl.replace('/api', '');
+    const fullUrl = filePath.startsWith('http') ? filePath : `${backendBase}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+    
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.target = '_blank';
+    if (fileName) link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    if (fileName) addToast(`Opening ${fileName}...`, 'success');
+  };
+
+  const handleDeleteDocumentVersion = async (docId) => {
+    if (!window.confirm('Are you sure you want to delete this document version?')) return;
+    try {
+      const res = await fetch(`${apiUrl}/documents/${docId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Document version deleted', 'success');
+        setVersionHistory(prev => prev.filter(v => v.id !== docId));
+        fetchProjectDetails();
+        if (versionHistory.length <= 1) {
+          setIsDocDrawerOpen(false);
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setVersionHistory(prev => prev.filter(v => v.id !== docId));
+      addToast('Document version deleted (Demo)', 'success');
+      fetchProjectDetails();
     }
   };
 
@@ -734,17 +784,17 @@ const ProjectDetail = () => {
 
   const kanbanColumns = useMemo(() => {
     const cols = { NotStarted: [], InProgress: [], Blocked: [], Done: [] };
-    if (project.tasks) {
+    if (project?.tasks) {
       project.tasks.forEach(t => {
         if (cols[t.status]) cols[t.status].push(t);
         else cols.NotStarted.push(t);
       });
     }
     return cols;
-  }, [project.tasks]);
+  }, [project?.tasks]);
 
   const filteredProjectDocuments = useMemo(() => {
-    if (!project.documents) return [];
+    if (!project?.documents) return [];
     return project.documents.filter(doc => {
       const text = docSearch.toLowerCase();
       const matchDiscipline = !docDisciplineFilter || doc.discipline === docDisciplineFilter;
@@ -754,23 +804,23 @@ const ProjectDetail = () => {
         (doc.description && doc.description.toLowerCase().includes(text));
       return matchDiscipline && matchType && matchSearch;
     });
-  }, [project.documents, docSearch, docDisciplineFilter, docTypeFilter]);
+  }, [project?.documents, docSearch, docDisciplineFilter, docTypeFilter]);
 
   const projectDocDisciplines = useMemo(() => {
-    if (!project.documents) return [];
+    if (!project?.documents) return [];
     return ['', ...new Set(project.documents.map(d => d.discipline).filter(Boolean))];
-  }, [project.documents]);
+  }, [project?.documents]);
 
   const projectDocTypes = useMemo(() => {
-    if (!project.documents) return [];
+    if (!project?.documents) return [];
     return ['', ...new Set(project.documents.map(d => d.fileType.toLowerCase()).filter(Boolean))];
-  }, [project.documents]);
+  }, [project?.documents]);
 
   // Active workflow selection for visual trail (Module 8)
   const activeWorkflow = useMemo(() => {
-    if (!project.approvalWorkflows) return null;
+    if (!project?.approvalWorkflows) return null;
     return project.approvalWorkflows.find(w => w.status === 'Pending') || project.approvalWorkflows[0];
-  }, [project.approvalWorkflows]);
+  }, [project?.approvalWorkflows]);
 
   const totalVal = project ? parseFloat(project.budget || 0) : 0;
   const spentVal = project ? parseFloat(project.budgetSpent || 0) : 0;
@@ -919,7 +969,7 @@ const ProjectDetail = () => {
         className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer select-none"
       >
         <ArrowLeft className="w-4 h-4 shrink-0" />
-        Back to projects hub
+        Back to Pipeline projects hub
       </button>
 
       {/* Detail Header */}
@@ -1106,7 +1156,7 @@ const ProjectDetail = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-805 dark:text-white flex items-center gap-2"><Users className="w-5 h-5 text-teal-500" />Assigned Team Division ({project.team?.length || 0} Members)</h3>
-              <button onClick={() => setIsAssignModalOpen(true)} className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm"><UserPlus className="w-4 h-4" />Assign Member</button>
+              <button onClick={() => setIsAssignModalOpen(true)} className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm"><UserPlus className="w-4 h-4" />Assign Team Member</button>
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-202 rounded-xl overflow-hidden shadow-xs">
@@ -1197,7 +1247,9 @@ const ProjectDetail = () => {
                 <div className="bg-white dark:bg-slate-900 border border-slate-202 p-8 rounded-xl text-center text-xs text-slate-400">No project drawings loaded.</div>
               ) : docViewMode === 'list' ? (
                 <DataTable columns={documentColumns} data={filteredProjectDocuments} actions={[
-                  { label: 'Version Timeline', onClick: (row)=>openDocHistoryDrawer(row) }
+                  { label: 'View / Open File', onClick: (row) => handleOpenDocFile(row.filePath, row.fileName) },
+                  { label: 'Version Timeline', onClick: (row) => openDocHistoryDrawer(row) },
+                  { label: 'Download File', onClick: (row) => handleOpenDocFile(row.filePath, row.fileName) }
                 ]} />
               ) : (
                 <div className="grid grid-cols-2 gap-4">
@@ -1351,13 +1403,20 @@ const ProjectDetail = () => {
             <select value={assignForm.employeeId} required onChange={e => setAssignForm({ ...assignForm, employeeId: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 cursor-pointer">
               <option value="">Choose Employee...</option>
               {employees.filter(emp => !project.team?.some(m => m.employeeId === emp.id)).map(emp => (
-                <option key={emp.id} value={emp.id}>{emp.user?.name}</option>
+                <option key={emp.id} value={emp.id}>{emp.user?.name} ({emp.designation})</option>
               ))}
             </select>
           </div>
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Role on this Project *</label>
             <input type="text" required value={assignForm.roleOnProject} onChange={e => setAssignForm({ ...assignForm, roleOnProject: e.target.value })} placeholder="e.g. Lead Mechanical Draftsman" className="w-full bg-white border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Allocation Workload (% capacity) *</label>
+            <div className="flex items-center gap-3">
+              <input type="range" min="10" max="100" step="5" value={assignForm.allocationPercent || 50} onChange={e => setAssignForm({ ...assignForm, allocationPercent: Number(e.target.value) })} className="w-full h-1.5 bg-slate-200 rounded-lg cursor-pointer accent-teal-600" />
+              <span className="font-technical font-bold text-sm text-teal-600 bg-teal-50 px-2.5 py-1 rounded border border-teal-100 shrink-0">{assignForm.allocationPercent || 50}%</span>
+            </div>
           </div>
         </form>
       </Modal>
@@ -1379,10 +1438,10 @@ const ProjectDetail = () => {
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Task Title *</label>
             <input type="text" required value={newTaskData.title} onChange={e => setNewTaskData({ ...newTaskData, title: e.target.value })} placeholder="e.g. Design review checklist sign-off" className={`w-full bg-white border ${taskErrors.title ? 'border-rose-500' : 'border-slate-202'} rounded-lg px-3 py-2 text-sm text-slate-900`} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Assignee *</label>
-              <select value={newTaskData.assigneeId} required onChange={e => setNewTaskData({ ...newTaskData, assigneeId: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 cursor-pointer">
+              <select value={newTaskData.assigneeId} required onChange={e => setNewTaskData({ ...newTaskData, assigneeId: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-2.5 py-2 text-sm text-slate-900 cursor-pointer">
                 <option value="">Select Team Member...</option>
                 {project.team?.map(m => (
                   <option key={m.employeeId} value={m.employeeId}>{m.employee?.user?.name}</option>
@@ -1390,8 +1449,16 @@ const ProjectDetail = () => {
               </select>
             </div>
             <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Priority *</label>
+              <select value={newTaskData.priority} onChange={e => setNewTaskData({ ...newTaskData, priority: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-2.5 py-2 text-sm text-slate-900 cursor-pointer">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Due Date *</label>
-              <input type="date" required value={newTaskData.dueDate} onChange={e => setNewTaskData({ ...newTaskData, dueDate: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 font-technical" />
+              <input type="date" required value={newTaskData.dueDate} onChange={e => setNewTaskData({ ...newTaskData, dueDate: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-2.5 py-2 text-sm text-slate-900 font-technical" />
             </div>
           </div>
         </form>
@@ -1418,15 +1485,67 @@ const ProjectDetail = () => {
             <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 border border-slate-100 rounded-xl">
               <div>
                 <span className="text-slate-455 font-bold uppercase block mb-1">Status</span>
-                <select value={selectedTask.status} onChange={(e) => handleUpdateTaskStatus(selectedTask.id, e.target.value)} className="bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer">
+                <select value={selectedTask.status} onChange={(e) => handleUpdateTask(selectedTask.id, { status: e.target.value })} className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer">
                   <option value="NotStarted">Pending</option>
                   <option value="InProgress">In Progress</option>
                   <option value="Blocked">Blocked</option>
                   <option value="Done">Done</option>
                 </select>
               </div>
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Priority</span>
+                {currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director' ? (
+                  <select value={selectedTask.priority} onChange={(e) => handleUpdateTask(selectedTask.id, { priority: e.target.value })} className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer">
+                    <option value="Low">Low Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="High">High Priority</option>
+                  </select>
+                ) : (
+                  <span className="inline-flex px-2 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded border border-slate-200">
+                    {selectedTask.priority} Priority
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Assigned Specialist</span>
+                <select value={selectedTask.assigneeId || ''} onChange={(e) => handleUpdateTask(selectedTask.id, { assigneeId: Number(e.target.value) })} className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer">
+                  <option value="">Choose Specialist...</option>
+                  {project.team?.map(m => (
+                    <option key={m.employeeId} value={m.employeeId}>{m.employee?.user?.name || `Employee #${m.employeeId}`}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Deliverable Phase</span>
+                <select value={selectedTask.phase || 'Design'} onChange={(e) => handleUpdateTask(selectedTask.id, { phase: e.target.value })} className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer">
+                  <option value="Design">Design Phase</option>
+                  <option value="Approval">Approval Phase</option>
+                  <option value="Execution">Execution Phase</option>
+                  <option value="Handover">Handover Phase</option>
+                  <option value="Completed">Completed Phase</option>
+                </select>
+              </div>
+
+              <div className="col-span-2">
+                <span className="text-slate-455 font-bold uppercase block mb-1">Target Due Date</span>
+                <input type="date" value={selectedTask.dueDate || ''} onChange={(e) => handleUpdateTask(selectedTask.id, { dueDate: e.target.value })} className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold font-technical cursor-pointer" />
+              </div>
             </div>
-            <p className="text-sm text-slate-500 leading-relaxed bg-white border p-3 rounded-lg">{selectedTask.description}</p>
+
+            <div>
+              <span className="text-slate-455 font-bold uppercase block mb-1.5 text-xs">Deliverable Description</span>
+              <textarea
+                rows={4}
+                value={selectedTask.description || ''}
+                onChange={(e) => setSelectedTask(prev => ({ ...prev, description: e.target.value }))}
+                onBlur={(e) => handleUpdateTask(selectedTask.id, { description: e.target.value })}
+                placeholder="Enter task engineering instructions..."
+                className="w-full bg-white border border-slate-202 rounded-lg p-3 text-sm text-slate-800 focus:outline-teal-500"
+              />
+              <span className="text-[10px] text-slate-400 italic block mt-1">Changes auto-save on blur.</span>
+            </div>
           </div>
         )}
       </Drawer>
@@ -1447,10 +1566,45 @@ const ProjectDetail = () => {
             <div className="relative pl-6 space-y-5 border-l border-slate-200">
               {versionHistory.map((ver, idx) => (
                 <div key={ver.id || ver.version} className="relative">
-                  <div className={`absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-2 border-white ${idx === 0 ? 'bg-teal-505' : 'bg-slate-350'}`}></div>
+                  <div className={`absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-2 border-white ${idx === 0 ? 'bg-teal-500' : 'bg-slate-350'}`}></div>
                   <div className="bg-slate-50 p-4 border border-slate-100 rounded-xl space-y-2">
-                    <div className="flex justify-between items-center"><span className="text-xs font-bold text-slate-800">v{ver.version}</span><span className="font-technical text-[10px] text-slate-400">{ver.uploadedAt.split('T')[0]}</span></div>
-                    <button onClick={() => addToast('Downloading version...','success')} className="px-2 py-1 bg-white border rounded text-[9px] font-bold cursor-pointer"><Download className="w-3.5 h-3.5 inline mr-1" />Download</button>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-slate-800">
+                        Version v{ver.version} {idx === 0 && <strong className="text-[10px] text-teal-600 font-bold ml-1 uppercase">(Latest)</strong>}
+                      </span>
+                      <span className="font-technical text-[10px] text-slate-400">
+                        {ver.uploadedAt ? (typeof ver.uploadedAt === 'string' ? ver.uploadedAt.split('T')[0] : new Date(ver.uploadedAt).toISOString().split('T')[0]) : 'Recent'}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-end text-[10px] text-slate-500 pt-1">
+                      <div>
+                        <p>By: <strong className="font-bold text-slate-700">{ver.uploader?.user?.name || ver.uploader?.designation || 'Staff'}</strong></p>
+                        <p className="mt-0.5">Size: {ver.fileSizeKB > 1024 ? `${(ver.fileSizeKB/1024).toFixed(1)} MB` : `${ver.fileSizeKB || 0} KB`}</p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => handleOpenDocFile(ver.filePath, ver.fileName || selectedDoc.fileName)}
+                          className="px-2.5 py-1 bg-teal-50 border border-teal-100 hover:bg-teal-100 rounded text-[9px] font-bold text-teal-700 cursor-pointer flex items-center gap-1 select-none"
+                        >
+                          <ExternalLink className="w-3 h-3 shrink-0" />View File
+                        </button>
+                        <button
+                          onClick={() => handleOpenDocFile(ver.filePath, ver.fileName || selectedDoc.fileName)}
+                          className="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-50 rounded text-[9px] font-bold text-slate-700 cursor-pointer flex items-center gap-1 select-none"
+                        >
+                          <Download className="w-3 h-3 shrink-0" />Download
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDocumentVersion(ver.id)}
+                          className="px-2.5 py-1 bg-rose-50 border border-rose-100 hover:bg-rose-100 rounded text-[9px] font-bold text-rose-600 cursor-pointer flex items-center gap-1 select-none"
+                          title="Delete this revision"
+                        >
+                          <Trash2 className="w-3 h-3 shrink-0" />Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

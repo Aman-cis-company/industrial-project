@@ -15,9 +15,14 @@ import Risks from './pages/Risks';
 import Approvals from './pages/Approvals';
 import Proposals from './pages/Proposals';
 import AIAssistant from './pages/AIAssistant';
-import PageHeader from './components/PageHeader';
-import EmptyState from './components/EmptyState';
-import { Construction } from 'lucide-react';
+import PipelineDashboard from './pages/PipelineDashboard';
+import PipelineMap from './pages/PipelineMap';
+import PipelineSegments from './pages/PipelineSegments';
+import PipelineSegmentDetail from './pages/PipelineSegmentDetail';
+import PipelineInspections from './pages/PipelineInspections';
+import PipelineIncidents from './pages/PipelineIncidents';
+import PipelineMaintenance from './pages/PipelineMaintenance';
+import Settings from './pages/Settings';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -36,22 +41,6 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return children;
-};
-
-// Generic Module Placeholder Page
-const ModulePlaceholder = ({ name }) => {
-  return (
-    <div>
-      <PageHeader title={name} breadcrumbs={['AeroPMO', name]} />
-      <div className="mt-6">
-        <EmptyState
-          icon={Construction}
-          title={`${name} Engine Installed`}
-          description={`The backend controllers and DB schemas for ${name} are fully mapped. Interactive frontend widgets and sub-pages will load in module-by-module phase sprints.`}
-        />
-      </div>
-    </div>
-  );
 };
 
 function App() {
@@ -82,7 +71,16 @@ function App() {
               <Route path="workforce" element={<Resources />} />
               <Route path="risks" element={<Risks />} />
               <Route path="ai-assistant" element={<AIAssistant />} />
-              <Route path="settings" element={<ModulePlaceholder name="Platform Configuration" />} />
+              
+              {/* Pipeline Monitoring Routes */}
+              <Route path="pipeline/dashboard" element={<PipelineDashboard />} />
+              <Route path="pipeline/map" element={<PipelineMap />} />
+              <Route path="pipeline/segments" element={<PipelineSegments />} />
+              <Route path="pipeline/segments/:id" element={<PipelineSegmentDetail />} />
+              <Route path="pipeline/inspections" element={<PipelineInspections />} />
+              <Route path="pipeline/incidents" element={<PipelineIncidents />} />
+              <Route path="pipeline/maintenance" element={<PipelineMaintenance />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
           </Routes>

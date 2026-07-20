@@ -10,15 +10,13 @@ import Modal from '../components/Modal';
 import { CardSkeleton } from '../components/LoadingSkeleton';
 import {
   Briefcase,
-  Building2,
-  Map,
-  Wind,
-  Zap,
-  Droplet,
-  Waves,
-  Palette,
-  Hospital,
-  Box,
+  Route,
+  GitBranch,
+  Settings as SettingsIcon,
+  Radio,
+  Shield,
+  Clipboard,
+  Activity,
   Plus,
   LayoutGrid,
   List,
@@ -33,15 +31,12 @@ import {
 } from 'lucide-react';
 
 export const CategoryConfig = {
-  Buildings: { label: 'Buildings', icon: Building2, color: 'text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800/30' },
-  UrbanPlanning: { label: 'Urban Planning', icon: Map, color: 'text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-800/30' },
-  HeatingCooling: { label: 'Heating/Cooling', icon: Wind, color: 'text-sky-600 border-sky-200 bg-sky-50 dark:bg-sky-950/20 dark:text-sky-400 dark:border-sky-800/30' },
-  PowerTransmissionDistribution: { label: 'Power Grid T&D', icon: Zap, color: 'text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-800/30' },
-  WaterTreatment: { label: 'Water Treatment', icon: Droplet, color: 'text-teal-600 border-teal-200 bg-teal-50 dark:bg-teal-950/20 dark:text-teal-400 dark:border-teal-800/30' },
-  WastewaterTreatment: { label: 'Wastewater Treatment', icon: Waves, color: 'text-indigo-600 border-indigo-200 bg-indigo-50 dark:bg-indigo-950/20 dark:text-indigo-400 dark:border-indigo-800/30' },
-  InteriorDesign: { label: 'Interior Design', icon: Palette, color: 'text-purple-600 border-purple-200 bg-purple-50 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-800/30' },
-  Healthcare: { label: 'Healthcare Planning', icon: Hospital, color: 'text-rose-600 border-rose-200 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-800/30' },
-  BIM: { label: 'BIM Execution', icon: Box, color: 'text-cyan-600 border-cyan-200 bg-cyan-50 dark:bg-cyan-950/20 dark:text-cyan-400 dark:border-cyan-800/30' }
+  PipelineTransmission: { label: 'Pipeline Transmission', icon: Route, color: 'text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800/30' },
+  GatheringDistribution: { label: 'Gathering & Distribution', icon: GitBranch, color: 'text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-800/30' },
+  PumpValveTelemetry: { label: 'Pump & Valve Telemetry', icon: SettingsIcon, color: 'text-sky-600 border-sky-200 bg-sky-50 dark:bg-sky-950/20 dark:text-sky-400 dark:border-sky-800/30' },
+  LeakDetectionSensors: { label: 'Leak Detection & Sensors', icon: Radio, color: 'text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-800/30' },
+  CathodicProtection: { label: 'Cathodic Protection', icon: Shield, color: 'text-teal-600 border-teal-200 bg-teal-50 dark:bg-teal-950/20 dark:text-teal-400 dark:border-teal-800/30' },
+  RegulatoryCompliance: { label: 'Regulatory & Compliance', icon: Clipboard, color: 'text-purple-600 border-purple-200 bg-purple-50 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-800/30' }
 };
 
 const Projects = () => {
@@ -74,7 +69,7 @@ const Projects = () => {
   const [formData, setFormData] = useState({
     name: '',
     clientName: '',
-    serviceCategory: 'Buildings',
+    serviceCategory: 'PipelineTransmission',
     description: '',
     budget: '',
     startDate: '',
@@ -110,12 +105,12 @@ const Projects = () => {
       console.warn('Backend server offline. Loading mock project database.');
       // Local seed fallback
       setProjects([
-        { id: 1, name: 'NEOM Spine Tunnel Structural Design', clientName: 'NEOM Authority', serviceCategory: 'Buildings', description: 'Detailed structural design for concrete tunnel segments under the central Spine infrastructure.', budget: 45000000.00, budgetSpent: 12500000.00, startDate: '2026-01-10', endDate: '2027-12-30', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}, {}, {}] },
-        { id: 2, name: 'King Salman Park Infrastructure Master Plan', clientName: 'King Salman Park Foundation', serviceCategory: 'UrbanPlanning', description: 'Zoning, utility framework, and transport routing plans for Riyadh\'s primary smart city park district.', budget: 12500000.00, budgetSpent: 3500000.00, startDate: '2026-03-01', endDate: '2027-04-28', currentPhase: 'Design', status: 'OnTrack', projectManagerId: 4, projectManager: { user: { name: 'David Kojo' } }, teamMembers: [{}, {}, {}] },
-        { id: 3, name: 'Aramco Admin Complex HVAC Refit', clientName: 'Saudi Aramco', serviceCategory: 'HeatingCooling', description: 'Design and mechanical upgrade of central district cooling, water-chilled air handlers, and duct layouts.', budget: 8400000.00, budgetSpent: 6200000.00, startDate: '2025-06-01', endDate: '2026-09-30', currentPhase: 'Execution', status: 'AtRisk', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}, {}] },
-        { id: 4, name: 'Diriyah Gate Historic Substation Integration', clientName: 'Diriyah Gate Development Authority (DGDA)', serviceCategory: 'PowerTransmissionDistribution', description: 'Design, underground cabling routing, and substation deployment for the Diriyah Gate historical preservation zones.', budget: 18200000.00, budgetSpent: 14900000.00, startDate: '2025-08-15', endDate: '2026-11-20', currentPhase: 'Execution', status: 'Delayed', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}] },
-        { id: 5, name: 'Jeddah Central Seawater Desalination Plant', clientName: 'National Water Company (NWC)', serviceCategory: 'WaterTreatment', description: 'Membrane filtration layouts for the high-capacity seawater processing plant.', budget: 35000000.00, budgetSpent: 4200000.00, startDate: '2026-05-01', endDate: '2028-06-15', currentPhase: 'Design', status: 'OnTrack', projectManagerId: 4, projectManager: { user: { name: 'David Kojo' } }, teamMembers: [{}, {}] },
-        { id: 6, name: 'Riyadh South Biological Wastewater Plant', clientName: 'Ministry of Water & Agriculture', serviceCategory: 'WastewaterTreatment', description: 'Activated sludge and filtration treatment plant engineering with low-carbon emissions profile.', budget: 52000000.00, budgetSpent: 28300000.00, startDate: '2025-03-01', endDate: '2027-02-28', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 4, projectManager: { user: { name: 'David Kojo' } }, teamMembers: [{}, {}, {}] }
+        { id: 1, name: 'GAIL Hazira-Vijaipur-Jagdishpur (HVJ) Pipeline Expansion', clientName: 'GAIL (India) Limited', serviceCategory: 'PipelineTransmission', description: 'Detailed expansion design of the major trunk line and control valves.', budget: 45000000.00, budgetSpent: 12500000.00, startDate: '2026-01-10', endDate: '2027-12-30', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}, {}, {}] },
+        { id: 2, name: 'IOCL Koyali Refinery Chilled Loop Overhaul', clientName: 'Indian Oil Corporation (IOCL)', serviceCategory: 'PumpValveTelemetry', description: 'Upgrading the chilled water layout and refinery air processing blocks.', budget: 8400000.00, budgetSpent: 6200000.00, startDate: '2025-06-01', endDate: '2026-09-30', currentPhase: 'Execution', status: 'AtRisk', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}, {}] },
+        { id: 3, name: 'ONGC KG Basin Subsea Grid Substation Integration', clientName: 'Oil and Natural Gas Corporation (ONGC)', serviceCategory: 'CathodicProtection', description: 'Concealed layout designs for remote underwater operations and corrosion safety.', budget: 18200000.00, budgetSpent: 14900000.00, startDate: '2025-08-15', endDate: '2026-11-20', currentPhase: 'Execution', status: 'Delayed', projectManagerId: 3, projectManager: { user: { name: 'Elena Rostova' } }, teamMembers: [{}, {}] },
+        { id: 4, name: 'Chennai Minjur Desalination Plant Expansion Layout', clientName: 'Delhi Jal Board (DJB)', serviceCategory: 'GatheringDistribution', description: 'Desalination piping structural support layouts and gathering lines.', budget: 35000000.00, budgetSpent: 4200000.00, startDate: '2026-05-01', endDate: '2028-06-15', currentPhase: 'Design', status: 'OnTrack', projectManagerId: 4, projectManager: { user: { name: 'David Kojo' } }, teamMembers: [{}, {}] },
+        { id: 5, name: 'Yamuna Action Plan Phase 3 Wastewater Plant', clientName: 'National Health Authority (NHA)', serviceCategory: 'RegulatoryCompliance', description: 'Activated biological sludge process engineering and safety compliance audits.', budget: 52000000.00, budgetSpent: 28300000.00, startDate: '2025-03-01', endDate: '2027-02-28', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 4, projectManager: { user: { name: 'David Kojo' } }, teamMembers: [{}, {}, {}] },
+        { id: 6, name: 'DLF CyberCity Phase 3 Fire Mains Layout', clientName: 'DLF Limited', serviceCategory: 'LeakDetectionSensors', description: 'Detailed custom piping, leak sensors, and pressure safety bypass layouts.', budget: 6800000.00, budgetSpent: 2100000.00, startDate: '2026-02-01', endDate: '2026-12-15', currentPhase: 'Approval', status: 'OnTrack', projectManagerId: 6, projectManager: { user: { name: 'Chloe Dupont' } }, teamMembers: [{}, {}] }
       ]);
       setEmployees([
         { id: 3, user: { name: 'Elena Rostova' }, designation: 'Senior Project Manager' },
@@ -409,8 +404,8 @@ const Projects = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <PageHeader
-        title="Project Registry Hub"
-        breadcrumbs={['AeroPMO', 'Projects']}
+        title="Pipeline PMO & Projects"
+        breadcrumbs={['PetroFlow', 'Pipeline PMO & Projects']}
         action={
           currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director'
             ? {

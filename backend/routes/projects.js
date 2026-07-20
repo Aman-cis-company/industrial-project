@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Project, Employee, User, ProjectTeamMember, Task, Document, Risk, Approval } = require('../models');
+const { Project, Employee, User, ProjectTeamMember, Task, Document, Risk, Approval, ComplianceItem, ApprovalWorkflow, ApprovalStep } = require('../models');
 const { protect, authorize } = require('../middleware/auth');
 
 // @desc    Get all projects with manager & team count
@@ -45,12 +45,26 @@ router.get('/:id', protect, async (req, res) => {
         {
           model: Task,
           as: 'tasks',
-          include: [{ model: User, as: 'assignee', attributes: ['id', 'name'] }]
+          include: [
+            {
+              model: Employee,
+              as: 'assignee',
+              attributes: ['id'],
+              include: [{ model: User, as: 'user', attributes: ['id', 'name', 'avatarUrl'] }]
+            }
+          ]
         },
         {
           model: Document,
           as: 'documents',
-          include: [{ model: User, as: 'uploader', attributes: ['id', 'name'] }]
+          include: [
+            {
+              model: Employee,
+              as: 'uploader',
+              attributes: ['id'],
+              include: [{ model: User, as: 'user', attributes: ['id', 'name', 'avatarUrl'] }]
+            }
+          ]
         },
         {
           model: Risk,

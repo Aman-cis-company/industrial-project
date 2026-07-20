@@ -9,7 +9,11 @@ const Risk = sequelize.define('Risk', {
   },
   projectId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
+  },
+  segmentId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   },
   title: {
     type: DataTypes.STRING,

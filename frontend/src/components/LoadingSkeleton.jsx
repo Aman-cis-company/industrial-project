@@ -1,34 +1,34 @@
 import React from 'react';
 
 export const CardSkeleton = () => (
-  <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm animate-pulse">
+  <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm animate-pulse transition-colors duration-200">
     <div className="flex items-center justify-between">
-      <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24"></div>
-      <div className="w-9 h-9 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+      <div className="h-4 bg-border dark:bg-border-dark animate-pulse rounded w-24"></div>
+      <div className="w-9 h-9 bg-border dark:bg-border-dark animate-pulse rounded-lg"></div>
     </div>
-    <div className="mt-4 h-8 bg-slate-200 dark:bg-slate-800 rounded w-32"></div>
-    <div className="mt-2 h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-44"></div>
+    <div className="mt-4 h-8 bg-border dark:bg-border-dark animate-pulse rounded w-32"></div>
+    <div className="mt-2 h-3 bg-background dark:bg-background-dark animate-pulse rounded w-44"></div>
   </div>
 );
 
 export const TableSkeleton = ({ rows = 5, cols = 4 }) => (
-  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm animate-pulse">
-    <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex gap-4">
-      <div className="h-9 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/3"></div>
-      <div className="h-9 bg-slate-200 dark:bg-slate-700 rounded-lg w-20"></div>
+  <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl overflow-hidden shadow-sm animate-pulse transition-colors duration-200">
+    <div className="p-4 bg-background dark:bg-background-dark border-b border-border dark:border-border-dark flex gap-4">
+      <div className="h-9 bg-border dark:bg-border-dark animate-pulse rounded-lg w-1/3"></div>
+      <div className="h-9 bg-border dark:bg-border-dark animate-pulse rounded-lg w-20"></div>
     </div>
-    <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex gap-6">
+    <div className="p-4 border-b border-border dark:border-border-dark flex gap-6">
       {Array(cols).fill(0).map((_, i) => (
-        <div key={i} className="h-4 bg-slate-200 dark:bg-slate-800 rounded flex-1"></div>
+        <div key={i} className="h-4 bg-border dark:bg-border-dark animate-pulse rounded flex-1"></div>
       ))}
     </div>
-    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+    <div className="divide-y divide-border dark:divide-border-dark">
       {Array(rows).fill(0).map((_, rIndex) => (
         <div key={rIndex} className="p-4 flex gap-6">
           {Array(cols).fill(0).map((_, cIndex) => (
             <div
               key={cIndex}
-              className={`h-4 bg-slate-100 dark:bg-slate-800/60 rounded flex-1 ${
+              className={`h-4 bg-background dark:bg-background-dark animate-pulse rounded flex-1 ${
                 cIndex === 0 ? 'w-2/3' : 'w-full'
               }`}
             ></div>

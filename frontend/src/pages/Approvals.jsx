@@ -216,7 +216,7 @@ const Approvals = () => {
       header: 'Phase Gate Transition',
       accessor: 'phaseTrigger',
       render: (row) => (
-        <span className="text-[10px] font-technical font-extrabold uppercase bg-slate-100 dark:bg-slate-850 px-2 py-0.5 rounded text-slate-650 dark:text-slate-350">
+        <span className="inline-flex items-center text-[10px] font-technical font-extrabold uppercase bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 shadow-xs">
           {row.phaseTrigger}
         </span>
       )
@@ -264,8 +264,8 @@ const Approvals = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Digital Approvals Desk"
-        breadcrumbs={['AeroPMO', 'Approvals Registry']}
+        title="Workflow Automation & Approvals"
+        breadcrumbs={['PetroFlow', 'Workflow Automation']}
       />
 
       {/* Pending approvals section */}
@@ -430,7 +430,7 @@ const Approvals = () => {
                 Sign-off Trail Progress
               </h4>
 
-              <div className="relative pl-6 space-y-6 border-l border-slate-200 dark:border-slate-850">
+              <div className="relative pl-6 space-y-6 border-l border-slate-200 dark:border-slate-800">
                 {selectedWorkflow.steps?.map((step) => {
                   const isPending = step.status === 'Pending';
                   const isApproved = step.status === 'Approved';
@@ -445,7 +445,7 @@ const Approvals = () => {
                         {step.stepOrder}
                       </div>
 
-                      <div className="bg-slate-50/50 dark:bg-slate-850 p-4 border border-slate-200/50 dark:border-slate-800 rounded-xl space-y-2">
+                      <div className="bg-slate-50/50 dark:bg-slate-900/40 p-4 border border-slate-200/50 dark:border-slate-800 rounded-xl space-y-2">
                         <div className="flex justify-between items-center text-xs font-semibold">
                           <span className="text-slate-800 dark:text-slate-250">
                             {step.approverRole} Check

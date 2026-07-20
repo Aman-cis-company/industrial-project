@@ -13,6 +13,12 @@ const ApprovalWorkflow = require('./ApprovalWorkflow');
 const ApprovalStep = require('./ApprovalStep');
 const Client = require('./Client');
 const Proposal = require('./Proposal');
+const PipelineSegment = require('./PipelineSegment');
+const PipelineAsset = require('./PipelineAsset');
+const InspectionLog = require('./InspectionLog');
+const IncidentReport = require('./IncidentReport');
+const MaintenanceRecord = require('./MaintenanceRecord');
+
 
 // Relationships
 
@@ -101,6 +107,47 @@ Proposal.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
 Employee.hasMany(Proposal, { foreignKey: 'createdById', as: 'createdProposals' });
 Proposal.belongsTo(Employee, { foreignKey: 'createdById', as: 'creator' });
 
+// PipelineSegment <-> PipelineAsset
+PipelineSegment.hasMany(PipelineAsset, { foreignKey: 'segmentId', as: 'assets', onDelete: 'CASCADE' });
+PipelineAsset.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'segment' });
+
+// PipelineSegment <-> InspectionLog
+PipelineSegment.hasMany(InspectionLog, { foreignKey: 'segmentId', as: 'inspections', onDelete: 'CASCADE' });
+InspectionLog.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'segment' });
+
+// InspectionLog <-> Employee (Inspector)
+Employee.hasMany(InspectionLog, { foreignKey: 'inspectorId', as: 'inspections' });
+InspectionLog.belongsTo(Employee, { foreignKey: 'inspectorId', as: 'inspector' });
+
+// PipelineSegment <-> IncidentReport
+PipelineSegment.hasMany(IncidentReport, { foreignKey: 'segmentId', as: 'incidents', onDelete: 'CASCADE' });
+IncidentReport.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'segment' });
+
+// IncidentReport <-> Employee (Reporter)
+Employee.hasMany(IncidentReport, { foreignKey: 'reportedById', as: 'reportedIncidents' });
+IncidentReport.belongsTo(Employee, { foreignKey: 'reportedById', as: 'reportedBy' });
+
+// PipelineSegment <-> MaintenanceRecord
+PipelineSegment.hasMany(MaintenanceRecord, { foreignKey: 'segmentId', as: 'maintenanceRecords', onDelete: 'CASCADE' });
+MaintenanceRecord.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'segment' });
+
+// PipelineAsset <-> MaintenanceRecord
+PipelineAsset.hasMany(MaintenanceRecord, { foreignKey: 'assetId', as: 'maintenanceRecords', onDelete: 'CASCADE' });
+MaintenanceRecord.belongsTo(PipelineAsset, { foreignKey: 'assetId', as: 'asset' });
+
+// MaintenanceRecord <-> Employee (Technician)
+Employee.hasMany(MaintenanceRecord, { foreignKey: 'technicianId', as: 'maintenanceTasks' });
+MaintenanceRecord.belongsTo(Employee, { foreignKey: 'technicianId', as: 'technician' });
+
+// PipelineSegment <-> Risk
+PipelineSegment.hasMany(Risk, { foreignKey: 'segmentId', as: 'risks', onDelete: 'CASCADE' });
+Risk.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'segment' });
+
+// PipelineSegment <-> ComplianceItem
+PipelineSegment.hasMany(ComplianceItem, { foreignKey: 'segmentId', as: 'complianceItems', onDelete: 'CASCADE' });
+ComplianceItem.belongsTo(PipelineSegment, { foreignKey: 'segmentId', as: 'compliance' });
+
+
 module.exports = {
   sequelize,
   User,
@@ -116,5 +163,10 @@ module.exports = {
   ApprovalWorkflow,
   ApprovalStep,
   Client,
-  Proposal
+  Proposal,
+  PipelineSegment,
+  PipelineAsset,
+  InspectionLog,
+  IncidentReport,
+  MaintenanceRecord
 };

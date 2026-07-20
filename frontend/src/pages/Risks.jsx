@@ -238,8 +238,8 @@ const Risks = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Risk & Compliance Registry"
-        breadcrumbs={['AeroPMO', 'Risk Register']}
+        title="Safety Risks & Compliance"
+        breadcrumbs={['PetroFlow', 'Safety Risks & Compliance']}
       />
 
       {/* Tabs Menu */}

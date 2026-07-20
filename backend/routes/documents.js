@@ -106,12 +106,15 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
 
     const nextVersion = latestDoc ? latestDoc.version + 1 : 1;
 
+    const relativePath = path.relative(path.join(__dirname, '..'), req.file.path);
+    const webFilePath = '/' + relativePath.replace(/\\/g, '/');
+
     // Create the document record
     const document = await Document.create({
       projectId,
       fileName: originalName,
       fileType: ext,
-      filePath: `/uploads/${projectId}/${req.file.filename}`,
+      filePath: webFilePath,
       version: nextVersion,
       uploadedById,
       discipline: discipline || 'General',
@@ -163,6 +166,30 @@ router.get('/:id/history', protect, async (req, res) => {
     });
 
     res.json({ success: true, data: history });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @desc    Delete document version
+// @route   DELETE /api/documents/:id
+// @access  Private
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const document = await Document.findByPk(req.params.id);
+    if (!document) {
+      return res.status(404).json({ success: false, message: 'Document version not found' });
+    }
+
+    if (document.filePath && document.filePath !== '#') {
+      const fullPath = path.join(__dirname, '..', document.filePath);
+      if (fs.existsSync(fullPath)) {
+        try { fs.unlinkSync(fullPath); } catch (e) { console.error('File unlink error:', e); }
+      }
+    }
+
+    await document.destroy();
+    res.json({ success: true, message: 'Document version deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

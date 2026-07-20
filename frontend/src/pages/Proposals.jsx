@@ -46,13 +46,13 @@ const Proposals = () => {
   const [newProposalData, setNewProposalData] = useState({
     title: '',
     clientId: '',
-    serviceCategory: 'Buildings',
+    serviceCategory: 'PipelineTransmission',
     estimatedValue: '',
     status: 'Draft',
     // Inline Client creation details
     isNewClient: false,
     newCompanyName: '',
-    newIndustry: 'Construction',
+    newIndustry: 'Energy & Utilities',
     newContactName: '',
     newContactEmail: ''
   });
@@ -342,8 +342,8 @@ const Proposals = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="CRM & Pipeline Desk"
-        breadcrumbs={['AeroPMO', 'CRM Pipeline']}
+        title="Client CRM & Proposals"
+        breadcrumbs={['PetroFlow', 'Client CRM & Proposals']}
       />
 
       {/* Tabs Menu */}
@@ -369,12 +369,12 @@ const Proposals = () => {
           {/* Summary stats cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 select-none">
             {/* Total Pipeline */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex items-center gap-4">
+            <div className="bg-gradient-to-br from-white to-teal-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-teal-500 rounded-xl p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-200">
               <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-lg">
                 <DollarSign className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <span className="text-xs font-semibold text-slate-400 block">Total Pipeline Value</span>
+                <span className="text-xs font-bold text-slate-450 block">Total Pipeline Value</span>
                 <span className="text-2xl font-bold font-technical text-slate-900 dark:text-white block mt-1">
                   SAR {pipelineData.totalValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
@@ -382,12 +382,12 @@ const Proposals = () => {
             </div>
 
             {/* Win Rate */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex items-center gap-4">
+            <div className="bg-gradient-to-br from-white to-emerald-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-emerald-500 rounded-xl p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-200">
               <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xs font-semibold text-slate-400 block">Negotiation Win Rate</span>
+                <span className="text-xs font-bold text-slate-450 block">Negotiation Win Rate</span>
                 <span className="text-2xl font-bold font-technical text-slate-900 dark:text-white block mt-1">
                   {pipelineData.winRate}%
                 </span>
@@ -395,12 +395,12 @@ const Proposals = () => {
             </div>
 
             {/* Won Value */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex items-center gap-4">
+            <div className="bg-gradient-to-br from-white to-amber-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 rounded-xl p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-200">
               <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
                 <Sparkles className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xs font-semibold text-slate-400 block">Won Contract Values</span>
+                <span className="text-xs font-bold text-slate-450 block">Won Contract Values</span>
                 <span className="text-2xl font-bold font-technical text-slate-900 dark:text-white block mt-1">
                   SAR {pipelineData.wonValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
@@ -415,12 +415,12 @@ const Proposals = () => {
                 setNewProposalData({
                   title: '',
                   clientId: clients[0]?.id || '',
-                  serviceCategory: 'Buildings',
+                  serviceCategory: 'PipelineTransmission',
                   estimatedValue: '',
                   status: 'Draft',
                   isNewClient: false,
                   newCompanyName: '',
-                  newIndustry: 'Construction',
+                  newIndustry: 'Energy & Utilities',
                   newContactName: '',
                   newContactEmail: ''
                 });
@@ -438,42 +438,42 @@ const Proposals = () => {
             {Object.keys(pipelineData.pipeline).map((status) => {
               const colProposals = pipelineData.pipeline[status] || [];
               const colHeaders = {
-                Draft: { title: 'Drafting', color: 'border-t-slate-400 bg-slate-100/10' },
-                Sent: { title: 'Sent to Client', color: 'border-t-sky-500 bg-sky-50/5' },
-                Negotiation: { title: 'Under Negotiation', color: 'border-t-amber-500 bg-amber-50/5' },
-                Won: { title: 'Won / Signed', color: 'border-t-emerald-500 bg-emerald-50/5' },
-                Lost: { title: 'Lost / Closed', color: 'border-t-rose-500 bg-rose-50/5' }
+                Draft: { title: 'Drafting', color: 'border-l-4 border-l-slate-400 bg-slate-100/60 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300' },
+                Sent: { title: 'Sent to Client', color: 'border-l-4 border-l-sky-500 bg-sky-50 dark:bg-sky-950/20 text-sky-750 dark:text-sky-400' },
+                Negotiation: { title: 'Under Negotiation', color: 'border-l-4 border-l-amber-500 bg-amber-50 dark:bg-amber-950/20 text-amber-750 dark:text-amber-450' },
+                Won: { title: 'Won / Signed', color: 'border-l-4 border-l-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-750 dark:text-emerald-400' },
+                Lost: { title: 'Lost / Closed', color: 'border-l-4 border-l-rose-500 bg-rose-50 dark:bg-rose-950/20 text-rose-750 dark:text-rose-455' }
               };
 
               return (
                 <div
                   key={status}
-                  className="bg-slate-50/60 dark:bg-slate-900/35 border border-slate-200/50 dark:border-slate-800 rounded-xl p-3 min-h-[400px] flex flex-col gap-3"
+                  className="bg-slate-200/40 dark:bg-slate-900/30 border border-slate-250/60 dark:border-slate-800/80 rounded-2xl p-3.5 min-h-[450px] flex flex-col gap-3 shadow-inner"
                 >
-                  <div className={`p-2 bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 border-t-2 rounded-lg flex justify-between items-center ${colHeaders[status].color}`}>
-                    <span className="font-bold text-xs text-slate-800 dark:text-slate-200">{colHeaders[status].title}</span>
-                    <span className="px-2 py-0.5 text-[9px] bg-slate-100 dark:bg-slate-800 border border-slate-200 text-slate-500 rounded font-technical font-bold">{colProposals.length}</span>
+                  <div className={`p-3 border border-slate-200/60 dark:border-slate-800/60 rounded-xl flex justify-between items-center shadow-xs ${colHeaders[status].color}`}>
+                    <span className="font-extrabold text-xs">{colHeaders[status].title}</span>
+                    <span className="px-2 py-0.5 text-[9px] bg-white/80 dark:bg-slate-800 border border-slate-200/40 dark:border-slate-700 text-slate-600 dark:text-slate-350 rounded-md font-technical font-bold">{colProposals.length}</span>
                   </div>
 
                   <div className="flex-1 flex flex-col gap-2.5 overflow-y-auto max-h-[500px]">
                     {colProposals.map((prop) => (
                       <div
                         key={prop.id}
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-lg shadow-xs hover:shadow-sm space-y-3 cursor-grab"
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 p-4 rounded-xl shadow-xs hover:shadow-md hover:border-brand/20 dark:hover:border-brand-dark/20 transition-all duration-300 space-y-3 cursor-grab hover:-translate-y-0.5"
                       >
                         <div>
-                          <span className="text-[9px] uppercase tracking-wide font-extrabold text-slate-400 block mb-1">
+                          <span className="text-[9px] uppercase tracking-wide font-extrabold text-slate-400 dark:text-slate-500 block mb-1">
                             {prop.serviceCategory || 'Engineering'}
                           </span>
-                          <h4 className="text-xs font-bold text-slate-850 dark:text-slate-100 leading-snug line-clamp-2">
+                          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2">
                             {prop.title}
                           </h4>
-                          <span className="text-[9px] text-slate-450 mt-1 block">
+                          <span className="text-[9px] text-text-muted mt-1.5 block">
                             Client: {prop.client?.companyName}
                           </span>
                         </div>
 
-                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
+                        <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
                           <span className="font-technical font-extrabold text-slate-700 dark:text-slate-300">
                             SAR {(prop.estimatedValue / 1000000).toFixed(1)}M
                           </span>
@@ -482,7 +482,7 @@ const Proposals = () => {
                           <select
                             value={prop.status}
                             onChange={(e) => handleUpdateProposalStatus(prop.id, e.target.value)}
-                            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-1 py-0.5 text-[9px] font-bold cursor-pointer"
+                            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 text-[9px] font-bold cursor-pointer"
                           >
                             <option value="Draft">Draft</option>
                             <option value="Sent">Sent</option>
@@ -538,7 +538,7 @@ const Proposals = () => {
       >
         <form onSubmit={handleAddProposal} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-505 mb-1.5">
+            <label className="form-label">
               Proposal Name *
             </label>
             <input
@@ -547,13 +547,13 @@ const Proposals = () => {
               value={newProposalData.title}
               onChange={(e) => setNewProposalData({ ...newProposalData, title: e.target.value })}
               placeholder="e.g. Phase 2 Geothermal Cooling Upgrade"
-              className="w-full bg-white dark:bg-slate-800 border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white"
+              className="form-input"
             />
           </div>
 
           {/* Client select type toggle */}
-          <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-850 p-2.5 border rounded-xl select-none">
-            <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+          <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/60 p-3 border border-slate-200 dark:border-slate-800/60 rounded-xl select-none">
+            <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer text-text-secondary dark:text-text-secondary-dark">
               <input
                 type="radio"
                 checked={!newProposalData.isNewClient}
@@ -562,7 +562,7 @@ const Proposals = () => {
               />
               Choose Existing
             </label>
-            <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+            <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer text-text-secondary dark:text-text-secondary-dark">
               <input
                 type="radio"
                 checked={newProposalData.isNewClient}
@@ -575,14 +575,14 @@ const Proposals = () => {
 
           {!newProposalData.isNewClient ? (
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-505 mb-1.5">
+              <label className="form-label">
                 Client Organization *
               </label>
               <select
                 value={newProposalData.clientId}
                 required={!newProposalData.isNewClient}
                 onChange={(e) => setNewProposalData({ ...newProposalData, clientId: e.target.value })}
-                className="w-full bg-white dark:bg-slate-805 border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
+                className="form-input"
               >
                 <option value="">Select client...</option>
                 {clients.map(c => (
@@ -592,22 +592,22 @@ const Proposals = () => {
             </div>
           ) : (
             /* Inline Client Form fields */
-            <div className="p-4 border rounded-xl space-y-3 bg-slate-50/50 dark:bg-slate-850">
+            <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl space-y-3 bg-slate-50/50 dark:bg-slate-900/30">
               <p className="text-[10px] font-bold text-teal-600 uppercase">New Client Profile parameters</p>
               
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Company name *</label>
-                <input type="text" required={newProposalData.isNewClient} value={newProposalData.newCompanyName} onChange={e=>setNewProposalData({...newProposalData, newCompanyName: e.target.value})} className="w-full bg-white dark:bg-slate-800 border rounded px-2.5 py-1 text-xs text-slate-850" />
+                <label className="form-label">Company name *</label>
+                <input type="text" required={newProposalData.isNewClient} value={newProposalData.newCompanyName} onChange={e=>setNewProposalData({...newProposalData, newCompanyName: e.target.value})} className="form-input" />
               </div>
               
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Contact name *</label>
-                  <input type="text" required={newProposalData.isNewClient} value={newProposalData.newContactName} onChange={e=>setNewProposalData({...newProposalData, newContactName: e.target.value})} className="w-full bg-white dark:bg-slate-800 border rounded px-2.5 py-1 text-xs text-slate-850" />
+                  <label className="form-label">Contact name *</label>
+                  <input type="text" required={newProposalData.isNewClient} value={newProposalData.newContactName} onChange={e=>setNewProposalData({...newProposalData, newContactName: e.target.value})} className="form-input" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Contact Email *</label>
-                  <input type="email" required={newProposalData.isNewClient} value={newProposalData.newContactEmail} onChange={e=>setNewProposalData({...newProposalData, newContactEmail: e.target.value})} className="w-full bg-white dark:bg-slate-800 border rounded px-2.5 py-1 text-xs text-slate-850" />
+                  <label className="form-label">Contact Email *</label>
+                  <input type="email" required={newProposalData.isNewClient} value={newProposalData.newContactEmail} onChange={e=>setNewProposalData({...newProposalData, newContactEmail: e.target.value})} className="form-input" />
                 </div>
               </div>
             </div>
@@ -615,28 +615,25 @@ const Proposals = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-505 mb-1.5">
+              <label className="form-label">
                 Service category
               </label>
               <select
                 value={newProposalData.serviceCategory}
                 onChange={(e) => setNewProposalData({ ...newProposalData, serviceCategory: e.target.value })}
-                className="w-full bg-white dark:bg-slate-805 border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
+                className="form-input"
               >
-                <option value="Buildings">Buildings</option>
-                <option value="UrbanPlanning">Urban Planning</option>
-                <option value="HeatingCooling">Heating/Cooling</option>
-                <option value="PowerTransmissionDistribution">Power T&D</option>
-                <option value="WaterTreatment">Water Treatment</option>
-                <option value="WastewaterTreatment">Wastewater Treatment</option>
-                <option value="InteriorDesign">Interior Design</option>
-                <option value="Healthcare">Healthcare Planning</option>
-                <option value="BIM">BIM Execution</option>
+                <option value="PipelineTransmission">Pipeline Transmission</option>
+                <option value="GatheringDistribution">Gathering & Distribution</option>
+                <option value="PumpValveTelemetry">Pump & Valve Telemetry</option>
+                <option value="LeakDetectionSensors">Leak Detection & Sensors</option>
+                <option value="CathodicProtection">Cathodic Protection</option>
+                <option value="RegulatoryCompliance">Regulatory & Compliance</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-505 mb-1.5">
+              <label className="form-label">
                 Estimated Contract Value (SAR) *
               </label>
               <input
@@ -645,7 +642,7 @@ const Proposals = () => {
                 value={newProposalData.estimatedValue}
                 onChange={(e) => setNewProposalData({ ...newProposalData, estimatedValue: e.target.value })}
                 placeholder="e.g. 4500000"
-                className="w-full bg-white dark:bg-slate-800 border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white font-technical"
+                className="form-input font-technical"
               />
             </div>
           </div>

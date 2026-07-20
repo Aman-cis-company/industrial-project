@@ -24,7 +24,8 @@ import {
   List,
   Box,
   CornerDownRight,
-  Briefcase
+  Briefcase,
+  Trash2
 } from 'lucide-react';
 
 // Maps file extensions to descriptive icons and colors
@@ -72,6 +73,50 @@ const Documents = () => {
   const [versionHistory, setVersionHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleOpenFile = (filePath, fileName = '') => {
+    if (!filePath || filePath === '#') {
+      addToast('Demo record - no file uploaded for this fallback item', 'info');
+      return;
+    }
+    const backendBase = apiUrl.replace('/api', '');
+    const fullUrl = filePath.startsWith('http') ? filePath : `${backendBase}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+    
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.target = '_blank';
+    if (fileName) link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    if (fileName) addToast(`Opening ${fileName}...`, 'success');
+  };
+
+  const handleDeleteDocumentVersion = async (docId) => {
+    if (!window.confirm('Are you sure you want to delete this document version?')) return;
+    try {
+      const res = await fetch(`${apiUrl}/documents/${docId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Document version deleted', 'success');
+        setVersionHistory(prev => prev.filter(v => v.id !== docId));
+        fetchAllData();
+        if (versionHistory.length <= 1) {
+          setIsDrawerOpen(false);
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setVersionHistory(prev => prev.filter(v => v.id !== docId));
+      addToast('Document version deleted (Demo)', 'success');
+      fetchAllData();
+    }
+  };
 
   // Fetch Documents & Projects
   const fetchAllData = async () => {
@@ -254,8 +299,8 @@ const Documents = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Document Management Desk"
-        breadcrumbs={['AeroPMO', 'DMS']}
+        title="Pipeline DMS & Drawings"
+        breadcrumbs={['PetroFlow', 'Pipeline DMS']}
       />
 
       {/* Filters & Search Grid */}
@@ -348,12 +393,16 @@ const Documents = () => {
           searchPlaceholder="Filter listed files..."
           actions={[
             {
+              label: 'View / Open in Tab',
+              onClick: (row) => handleOpenFile(row.filePath, row.fileName)
+            },
+            {
               label: 'Version History',
               onClick: (row) => openHistoryDrawer(row)
             },
             {
               label: 'Download file',
-              onClick: () => addToast('File downloaded (Demo Blueprint)', 'success')
+              onClick: (row) => handleOpenFile(row.filePath, row.fileName)
             }
           ]}
         />
@@ -465,13 +514,30 @@ const Documents = () => {
                               <p className="mt-0.5">Size: {ver.fileSizeKB > 1024 ? `${(ver.fileSizeKB/1024).toFixed(1)} MB` : `${ver.fileSizeKB} KB`}</p>
                             </div>
 
-                            <button
-                              onClick={() => addToast(`Downloading v${ver.version} file...`, 'success')}
-                              className="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded text-[10px] font-bold text-slate-750 dark:text-slate-200 flex items-center gap-1 cursor-pointer select-none"
-                            >
-                              <Download className="w-3 h-3 shrink-0" />
-                              Download
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleOpenFile(ver.filePath, ver.fileName || selectedDoc.fileName)}
+                                className="px-2.5 py-1 bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900/50 rounded text-[10px] font-bold text-teal-700 dark:text-teal-300 flex items-center gap-1 cursor-pointer select-none"
+                              >
+                                <ExternalLink className="w-3 h-3 shrink-0" />
+                                View File
+                              </button>
+                              <button
+                                onClick={() => handleOpenFile(ver.filePath, ver.fileName || selectedDoc.fileName)}
+                                className="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded text-[10px] font-bold text-slate-750 dark:text-slate-200 flex items-center gap-1 cursor-pointer select-none"
+                              >
+                                <Download className="w-3 h-3 shrink-0" />
+                                Download
+                              </button>
+                              <button
+                                onClick={() => handleDeleteDocumentVersion(ver.id)}
+                                className="px-2.5 py-1 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded text-[10px] font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1 cursor-pointer select-none"
+                                title="Delete revision"
+                              >
+                                <Trash2 className="w-3 h-3 shrink-0" />
+                                Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

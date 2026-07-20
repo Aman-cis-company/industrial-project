@@ -90,6 +90,38 @@ const MyTasks = () => {
     }
   };
 
+  // Update Task Priority In-Line
+  const handleUpdatePriority = async (taskId, nextPriority) => {
+    try {
+      const res = await fetch(`${apiUrl}/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ priority: nextPriority })
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Task priority updated successfully', 'success');
+        fetchMyTasks();
+        if (selectedTask && selectedTask.id === taskId) {
+          setSelectedTask(prev => ({ ...prev, priority: nextPriority }));
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setTasks(prev =>
+        prev.map(t => t.id === taskId ? { ...t, priority: nextPriority } : t)
+      );
+      addToast('Priority updated (Demo)', 'success');
+      if (selectedTask && selectedTask.id === taskId) {
+        setSelectedTask(prev => ({ ...prev, priority: nextPriority }));
+      }
+    }
+  };
+
   // Group Tasks by Urgency
   const groupedTasks = useMemo(() => {
     const groups = {
@@ -130,8 +162,8 @@ const MyTasks = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My Engineering Taskboard"
-        breadcrumbs={['AeroPMO', 'My Tasks']}
+        title="My Safety & Ops Tasks"
+        breadcrumbs={['PetroFlow', 'My Safety Tasks']}
       />
 
       {loading ? (
@@ -253,23 +285,42 @@ const MyTasks = () => {
                             </h4>
                           </div>
 
-                          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between flex-wrap gap-2">
                             <span className="text-[10px] font-technical font-semibold text-slate-400 dark:text-slate-550 flex items-center gap-1 select-none">
                               <Calendar className="w-3 h-3" />
                               Due: {task.dueDate}
                             </span>
 
-                            {/* Inline status update */}
-                            <select
-                              value={task.status}
-                              onChange={(e) => handleUpdateStatus(task.id, e.target.value)}
-                              className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-slate-700 dark:text-slate-300 cursor-pointer focus:outline-hidden"
-                            >
-                              <option value="NotStarted">Pending</option>
-                              <option value="InProgress">In Progress</option>
-                              <option value="Blocked">Blocked</option>
-                              <option value="Done">Done</option>
-                            </select>
+                            <div className="flex items-center gap-1.5">
+                              {/* Inline priority update */}
+                              {currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director' ? (
+                                <select
+                                  value={task.priority}
+                                  onChange={(e) => handleUpdatePriority(task.id, e.target.value)}
+                                  className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300 cursor-pointer focus:outline-hidden"
+                                >
+                                  <option value="Low">Low Priority</option>
+                                  <option value="Medium">Medium Priority</option>
+                                  <option value="High">High Priority</option>
+                                </select>
+                              ) : (
+                                <span className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded border border-slate-200/60 dark:border-slate-700">
+                                  {task.priority}
+                                </span>
+                              )}
+
+                              {/* Inline status update */}
+                              <select
+                                value={task.status}
+                                onChange={(e) => handleUpdateStatus(task.id, e.target.value)}
+                                className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300 cursor-pointer focus:outline-hidden"
+                              >
+                                <option value="NotStarted">Pending</option>
+                                <option value="InProgress">In Progress</option>
+                                <option value="Blocked">Blocked</option>
+                                <option value="Done">Done</option>
+                              </select>
+                            </div>
                           </div>
                         </div>
                       );
@@ -330,7 +381,19 @@ const MyTasks = () => {
               </div>
               <div>
                 <span className="text-slate-450 font-bold uppercase block mb-1">Priority</span>
-                <span className="font-semibold text-slate-700 dark:text-slate-350">{selectedTask.priority}</span>
+                {currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director' ? (
+                  <select
+                    value={selectedTask.priority}
+                    onChange={(e) => handleUpdatePriority(selectedTask.id, e.target.value)}
+                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 font-semibold text-slate-700 dark:text-slate-250 cursor-pointer focus:outline-hidden"
+                  >
+                    <option value="Low">Low Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="High">High Priority</option>
+                  </select>
+                ) : (
+                  <span className="font-semibold text-slate-700 dark:text-slate-350">{selectedTask.priority} Priority</span>
+                )}
               </div>
               <div className="pt-2 border-t border-slate-150 dark:border-slate-800">
                 <span className="text-slate-450 font-bold uppercase block mb-0.5">Due Date</span>

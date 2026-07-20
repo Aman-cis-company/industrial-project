@@ -9,7 +9,11 @@ const ComplianceItem = sequelize.define('ComplianceItem', {
   },
   projectId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
+  },
+  segmentId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   },
   requirementName: {
     type: DataTypes.STRING,

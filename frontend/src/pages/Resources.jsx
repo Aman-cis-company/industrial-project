@@ -24,7 +24,8 @@ import {
   Grid,
   BarChart3,
   Activity,
-  Briefcase
+  Briefcase,
+  Search
 } from 'lucide-react';
 
 const HeatmapColors = (pct) => {
@@ -72,6 +73,7 @@ const Resources = () => {
   // Filters State
   const [disciplineFilter, setDisciplineFilter] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Drawer details
   const [selectedResource, setSelectedResource] = useState(null);
@@ -120,9 +122,12 @@ const Resources = () => {
     return resources.filter(r => {
       const matchDiscipline = !disciplineFilter || r.discipline === disciplineFilter;
       const matchDept = !departmentFilter || r.department === departmentFilter;
-      return matchDiscipline && matchDept;
+      const matchSearch = !searchQuery || 
+        r.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        r.designation?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchDiscipline && matchDept && matchSearch;
     });
-  }, [resources, disciplineFilter, departmentFilter]);
+  }, [resources, disciplineFilter, departmentFilter, searchQuery]);
 
   // Summary Metrics Card Calculations
   const stats = useMemo(() => {
@@ -201,8 +206,8 @@ const Resources = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Resource Capacity & Workload Desk"
-        breadcrumbs={['AeroPMO', 'Resources']}
+        title="Specialist Allocation Heatmap"
+        breadcrumbs={['PetroFlow', 'Specialist Heatmap']}
       />
 
       {/* Summary Stat Cards */}
@@ -277,6 +282,19 @@ const Resources = () => {
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-center xl:justify-end">
+          <div className="relative w-full sm:max-w-xs">
+            <span className="absolute left-3 top-2.5 text-slate-400">
+              <Search className="w-3.5 h-3.5" />
+            </span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, designation..."
+              className="w-full pl-9 pr-4 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-lg text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-accent"
+            />
+          </div>
+
           <select
             value={disciplineFilter}
             onChange={(e) => setDisciplineFilter(e.target.value)}

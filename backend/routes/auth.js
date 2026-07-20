@@ -42,6 +42,60 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+router.put('/profile', protect, async (req, res) => {
+  const { name, email, avatarUrl, phone, password } = req.body;
+
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // If email is changing, make sure it's not taken
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ success: false, message: 'Email address already in use' });
+      }
+      user.email = email;
+    }
+
+    if (name) user.name = name;
+    if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
+    
+    if (password) {
+      user.password = password; // Will be hashed via hook
+    }
+
+    await user.save();
+
+    // If phone is provided, find the Employee model and update it
+    const { Employee } = require('../models');
+    const employee = await Employee.findOne({ where: { userId: user.id } });
+    if (employee) {
+      if (phone) employee.phone = phone;
+      await employee.save();
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatarUrl: user.avatarUrl
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // @desc    Get user profile
 // @route   GET /api/auth/me
 // @access  Private

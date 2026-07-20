@@ -16,6 +16,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
   ResponsiveContainer,
   Legend
 } from 'recharts';
@@ -34,18 +35,18 @@ import {
 } from 'lucide-react';
 
 const CATEGORY_COLORS = {
-  Buildings: '#3B82F6',
+  Buildings: '#4A7CB5',
   UrbanPlanning: '#10B981',
   HeatingCooling: '#06B6D4',
-  PowerTransmissionDistribution: '#F59E0B',
-  WaterTreatment: '#14B8A6',
+  PowerTransmissionDistribution: '#D97706',
+  WaterTreatment: '#2DD4BF',
   WastewaterTreatment: '#6366F1',
   InteriorDesign: '#8B5CF6',
   Healthcare: '#F43F5E',
-  BIM: '#00D8F6'
+  BIM: '#4A7CB5'
 };
 
-const CHART_COLORS = ['#3B82F6', '#14B8A6', '#F59E0B', '#6366F1', '#8B5CF6', '#F43F5E', '#06B6D4', '#10B981', '#00D8F6'];
+const CHART_COLORS = ['#4A7CB5', '#2DD4BF', '#D97706', '#6366F1', '#8B5CF6', '#F43F5E', '#06B6D4', '#10B981', '#F0A94A'];
 
 const Dashboard = () => {
   const { token, apiUrl, user } = useAuth();
@@ -171,7 +172,7 @@ const Dashboard = () => {
 
   if (loading || !summary) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#090D1C]">
+      <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background-dark transition-colors duration-200">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-500"></div>
       </div>
     );
@@ -181,25 +182,37 @@ const Dashboard = () => {
   const spendPct = summary.totalBudget > 0 ? Math.round((summary.totalSpent / summary.totalBudget) * 100) : 0;
 
   // Format category breakdown names for donut legend
+  const CATEGORY_LABELS = {
+    Buildings: 'Pipeline Pumping Stations',
+    UrbanPlanning: 'Utility Routing Networks',
+    HeatingCooling: 'LPG/LNG Cryogenic Loops',
+    PowerTransmissionDistribution: 'Gas Transmission Pipelines',
+    WaterTreatment: 'Subsea Oil Pipelines',
+    WastewaterTreatment: 'Refinery Flow Systems',
+    InteriorDesign: 'Refinery Bypass Pipelines',
+    Healthcare: 'Offshore Deepwater Lines',
+    BIM: 'Digital Twin Models'
+  };
+
   const formattedCategoryData = summary.categoryBreakdown?.map(item => ({
     ...item,
-    name: item.name.replace(/([A-Z])/g, ' $1').trim()
+    name: CATEGORY_LABELS[item.name] || item.name.replace(/([A-Z])/g, ' $1').trim()
   })) || [];
 
   // Project Status Distribution data
   const statusData = [
-    { name: 'On Track', count: summary.statusCounts?.OnTrack || 0, fill: '#14B8A6' },
-    { name: 'At Risk', count: summary.statusCounts?.AtRisk || 0, fill: '#F59E0B' },
-    { name: 'Delayed', count: summary.statusCounts?.Delayed || 0, fill: '#EF4444' },
-    { name: 'Completed', count: summary.statusCounts?.Completed || 0, fill: '#3B82F6' }
+    { name: 'On Track', count: summary.statusCounts?.OnTrack || 0, fill: '#2DD4BF' },
+    { name: 'At Risk', count: summary.statusCounts?.AtRisk || 0, fill: '#D97706' },
+    { name: 'Delayed', count: summary.statusCounts?.Delayed || 0, fill: '#F43F5E' },
+    { name: 'Completed', count: summary.statusCounts?.Completed || 0, fill: '#4A7CB5' }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 transition-colors duration-200">
       {/* Header and Report Action */}
       <PageHeader
-        title="Executive PMO Summary Desk"
-        breadcrumbs={['AeroPMO', 'Executive Control']}
+        title="Executive BI Portfolio & KPI Desk"
+        breadcrumbs={['PetroFlow', 'Executive BI Portfolio']}
         action={{
           label: reportLoading ? 'Compiling AI Report...' : 'Generate Executive Report',
           icon: Sparkles,
@@ -211,72 +224,72 @@ const Dashboard = () => {
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Active Projects */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-3">
+        <div className="bg-gradient-to-br from-white to-blue-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-blue-500 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold text-slate-400">Active PMO Contracts</span>
-            <div className="p-2 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-lg">
-              <Briefcase className="w-5 h-5" />
+            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">Active PMO Contracts</span>
+            <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg">
+              <Briefcase className="w-5 h-5" strokeWidth={1.5} />
             </div>
           </div>
           <div>
-            <p className="text-2xl font-bold font-technical text-slate-900 dark:text-white leading-none">
+            <p className="text-2xl font-bold font-technical text-text-primary dark:text-text-primary-dark leading-none">
               {summary.activeProjectsCount} Projects
             </p>
-            <span className="text-[10px] text-slate-400 block mt-2">
+            <span className="text-[10px] text-text-muted dark:text-text-muted-dark block mt-2">
               Across all 9 engineering divisions
             </span>
           </div>
         </div>
 
         {/* At-Risk Projects */}
-        <div className="bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-950/20 rounded-xl p-5 shadow-sm space-y-3 bg-rose-50/5">
+        <div className="bg-gradient-to-br from-white to-rose-50/30 dark:from-slate-900 dark:to-slate-950 border border-rose-200/60 dark:border-rose-950/20 border-l-4 border-l-rose-500 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold text-slate-400">At-Risk / Delayed</span>
+            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">At-Risk / Delayed</span>
             <div className="p-2 bg-rose-500/10 text-rose-600 dark:text-rose-450 rounded-lg">
-              <AlertTriangle className="w-5 h-5" />
+              <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
             </div>
           </div>
           <div>
             <p className="text-2xl font-bold font-technical text-rose-600 dark:text-rose-400 leading-none">
               {Number(summary.statusCounts?.AtRisk || 0) + Number(summary.statusCounts?.Delayed || 0)} Projects
             </p>
-            <span className="text-[10px] text-rose-500/80 block mt-2">
+            <span className="text-[10px] text-rose-500/85 block mt-2">
               Requires immediate resource leveling
             </span>
           </div>
         </div>
 
         {/* Budget Burn */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-3">
+        <div className="bg-gradient-to-br from-white to-amber-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold text-slate-400">Budget Utilization (SAR)</span>
+            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">Budget Utilization (SAR)</span>
             <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
-              <DollarSign className="w-5 h-5" />
+              <DollarSign className="w-5 h-5" strokeWidth={1.5} />
             </div>
           </div>
           <div>
-            <p className="text-2xl font-bold font-technical text-slate-900 dark:text-white leading-none">
+            <p className="text-2xl font-bold font-technical text-text-primary dark:text-text-primary-dark leading-none">
               {spendPct}% Used
             </p>
-            <div className="w-full bg-slate-100 dark:bg-slate-850 h-1 rounded-full overflow-hidden mt-3">
+            <div className="w-full bg-border dark:bg-border-dark h-1 rounded-full overflow-hidden mt-3">
               <div className="h-full bg-teal-500" style={{ width: `${spendPct}%` }}></div>
             </div>
           </div>
         </div>
 
         {/* Overdue Tasks */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-3">
+        <div className="bg-gradient-to-br from-white to-violet-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-violet-500 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold text-slate-400">Overdue Deliverables</span>
-            <div className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-lg">
-              <CheckSquare className="w-5 h-5" />
+            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">Overdue Deliverables</span>
+            <div className="p-2 bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-lg">
+              <CheckSquare className="w-5 h-5" strokeWidth={1.5} />
             </div>
           </div>
           <div>
-            <p className="text-2xl font-bold font-technical text-slate-900 dark:text-white leading-none">
+            <p className="text-2xl font-bold font-technical text-text-primary dark:text-text-primary-dark leading-none">
               {summary.overdueTasksCount} Tasks
             </p>
-            <span className="text-[10px] text-slate-400 block mt-2">
+            <span className="text-[10px] text-text-muted dark:text-text-muted-dark block mt-2">
               Assigned to active engineers
             </span>
           </div>
@@ -286,8 +299,8 @@ const Dashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Donut Chart: Services Breadcrumb */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+        <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 transition-colors duration-200">
+          <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
             Contracts by Service Division
           </h3>
           <div className="h-[240px] w-full">
@@ -307,12 +320,15 @@ const Dashboard = () => {
                     return <Cell key={`cell-${index}`} fill={color} />;
                   })}
                 </Pie>
-                <Tooltip formatter={(value) => [`${value} projects`, 'Contracts']} />
+                <Tooltip
+                  formatter={(value) => [`${value} projects`, 'Contracts']}
+                  contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
           {/* Legend */}
-          <div className="grid grid-cols-3 gap-1.5 text-[9px] font-semibold text-slate-450 uppercase pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="grid grid-cols-3 gap-1.5 text-[9px] font-semibold text-text-muted dark:text-text-muted-dark uppercase pt-2 border-t border-border dark:border-border-dark">
             {formattedCategoryData.slice(0, 9).map((entry, idx) => {
               const color = CATEGORY_COLORS[entry.name.replace(/\s+/g, '')] || CHART_COLORS[idx % CHART_COLORS.length];
               return (
@@ -326,16 +342,20 @@ const Dashboard = () => {
         </div>
 
         {/* Status Distribution Bar Chart */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+        <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 transition-colors duration-200">
+          <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
             Project Contract Status Load
           </h3>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusData} margin={{ bottom: 20 }}>
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#64748B' }} />
-                <YAxis tick={{ fontSize: 9, fill: '#64748B' }} allowDecimals={false} />
-                <Tooltip formatter={(value) => [`${value} projects`, 'Status Count']} />
+                <CartesianGrid stroke="var(--color-border)" strokeOpacity={0.5} vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} />
+                <YAxis tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} allowDecimals={false} />
+                <Tooltip
+                  formatter={(value) => [`${value} projects`, 'Status Count']}
+                  contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
+                />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -343,17 +363,21 @@ const Dashboard = () => {
         </div>
 
         {/* Budget Burn Line Chart */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+        <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 transition-colors duration-200">
+          <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
             Cumulative Budget Burn Trend (SAR)
           </h3>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trends}>
-                <XAxis dataKey="month" tick={{ fontSize: 9, fill: '#64748B' }} />
-                <YAxis tick={{ fontSize: 9, fill: '#64748B' }} formatter={(v) => `$${(v/1000000).toFixed(0)}M`} />
-                <Tooltip formatter={(v) => [`SAR ${Number(v).toLocaleString()}`, 'Spent Cumulative']} />
-                <Line type="monotone" dataKey="budgetBurn" stroke="#14B8A6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <CartesianGrid stroke="var(--color-border)" strokeOpacity={0.5} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} />
+                <YAxis tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} formatter={(v) => `$${(v/1000000).toFixed(0)}M`} />
+                <Tooltip
+                  formatter={(v) => [`SAR ${Number(v).toLocaleString()}`, 'Spent Cumulative']}
+                  contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
+                />
+                <Line type="monotone" dataKey="budgetBurn" stroke="#2DD4BF" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -363,14 +387,14 @@ const Dashboard = () => {
       {/* Bottom Row - At Risk Table & Milestones */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* At Risk Projects Table */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4 xl:col-span-2 overflow-x-auto select-none">
-          <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wide">
-            Action Required: At-Risk & Delayed Contracts
+        <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 xl:col-span-2 overflow-x-auto select-none transition-colors duration-200">
+          <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
+            Action Required: At-Risk &amp; Delayed Contracts
           </h3>
           
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase tracking-wider font-bold">
+              <tr className="border-b border-border dark:border-border-dark text-text-muted dark:text-text-muted-dark uppercase tracking-wider font-semibold bg-background dark:bg-background-dark text-[10px]">
                 <th className="pb-3 pl-2">Contract Name</th>
                 <th className="pb-3">Client</th>
                 <th className="pb-3 text-center">Spent Progress</th>
@@ -378,10 +402,10 @@ const Dashboard = () => {
                 <th className="pb-3 text-right pr-2">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-border dark:divide-border-dark">
               {summary.atRiskProjects?.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-slate-400 italic">
+                  <td colSpan={5} className="py-6 text-center text-text-muted dark:text-text-muted-dark italic">
                     No active contracts overallocated or delayed. Good compliance.
                   </td>
                 </tr>
@@ -392,29 +416,29 @@ const Dashboard = () => {
                     <tr
                       key={proj.id}
                       onClick={() => navigate(`/projects/${proj.id}`)}
-                      className="hover:bg-slate-50/50 dark:hover:bg-slate-850/50 cursor-pointer transition-colors"
+                      className="hover:bg-background dark:hover:bg-background-dark cursor-pointer transition-colors duration-200"
                     >
-                      <td className="py-3 font-semibold text-slate-850 dark:text-slate-200 pl-2 max-w-[200px] truncate" title={proj.name}>
+                      <td className="py-3 font-semibold text-text-primary dark:text-text-primary-dark pl-2 max-w-[200px] truncate" title={proj.name}>
                         {proj.name}
                       </td>
-                      <td className="py-3 text-slate-500 truncate max-w-[120px]">{proj.clientName}</td>
+                      <td className="py-3 text-text-muted dark:text-text-muted-dark truncate max-w-[120px]">{proj.clientName}</td>
                       <td className="py-3">
                         <div className="w-28 mx-auto space-y-1">
-                          <div className="flex justify-between text-[9px] font-technical font-bold text-slate-400">
+                          <div className="flex justify-between text-[9px] font-technical font-bold text-text-muted dark:text-text-muted-dark">
                             <span>SAR {(proj.budgetSpent/1000000).toFixed(1)}M</span>
                             <span>{pct}%</span>
                           </div>
-                          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                          <div className="w-full bg-border dark:bg-border-dark h-1 rounded-full overflow-hidden">
                             <div className="h-full bg-rose-500" style={{ width: `${pct}%` }}></div>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 text-slate-650 dark:text-slate-350">{proj.projectManager?.user?.name || 'Unassigned'}</td>
+                      <td className="py-3 text-text-muted dark:text-text-muted-dark">{proj.projectManager?.user?.name || 'Unassigned'}</td>
                       <td className="py-3 text-right pr-2">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold ${
                           proj.status === 'Delayed'
-                            ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-450 border border-rose-100'
-                            : 'bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100'
+                            ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100'
+                            : 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100'
                         }`}>
                           {proj.status === 'Delayed' ? '🔴 Delayed' : '🟡 At Risk'}
                         </span>
@@ -428,24 +452,24 @@ const Dashboard = () => {
         </div>
 
         {/* Milestones widget */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wide">
+        <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 transition-colors duration-200">
+          <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
             Next Critical Milestones
           </h3>
 
           <div className="space-y-3">
             {summary.upcomingMilestones?.length === 0 ? (
-              <p className="text-xs text-slate-400 italic py-6 text-center">
+              <p className="text-xs text-text-muted dark:text-text-muted-dark italic py-6 text-center">
                 No upcoming contract milestones registered.
               </p>
             ) : (
               summary.upcomingMilestones.map((mil, idx) => (
                 <div
                   key={mil.id || idx}
-                  className="p-3 bg-slate-50/50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 rounded-xl flex justify-between items-start gap-2"
+                  className="p-3 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded-xl flex justify-between items-start gap-2 transition-colors duration-200"
                 >
                   <div className="truncate">
-                    <p className="font-bold text-slate-850 dark:text-slate-200 text-xs truncate" title={mil.title}>
+                    <p className="font-bold text-text-primary dark:text-text-primary-dark text-xs truncate" title={mil.title}>
                       {mil.title}
                     </p>
                     <span
@@ -457,8 +481,8 @@ const Dashboard = () => {
                   </div>
 
                   <div className="text-right shrink-0">
-                    <span className="font-technical text-[9px] font-bold text-slate-450 block flex items-center gap-1 justify-end">
-                      <Clock className="w-3 h-3" />
+                    <span className="font-technical text-[9px] font-bold text-text-muted dark:text-text-muted-dark block flex items-center gap-1 justify-end">
+                      <Clock className="w-3 h-3" strokeWidth={1.5} />
                       {mil.targetDate}
                     </span>
                     <span className="inline-block mt-2 scale-75 origin-right">
@@ -481,7 +505,7 @@ const Dashboard = () => {
           <>
             <button
               onClick={() => setIsReportModalOpen(false)}
-              className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold rounded-lg text-slate-700 dark:text-slate-350 cursor-pointer"
+              className="px-4 py-2 border border-border dark:border-border-dark hover:bg-background dark:hover:bg-background-dark text-sm font-semibold rounded-lg text-text-primary dark:text-text-primary-dark cursor-pointer transition-colors duration-200"
             >
               Close
             </button>
@@ -490,7 +514,7 @@ const Dashboard = () => {
                 navigator.clipboard.writeText(aiReportContent);
                 addToast('Report copied to clipboard', 'success');
               }}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg cursor-pointer"
+              className="px-4 py-2 bg-background dark:bg-background-dark hover:bg-border dark:hover:bg-border-dark text-text-primary dark:text-text-primary-dark text-sm font-semibold rounded-lg cursor-pointer transition-colors duration-200"
             >
               Copy Report
             </button>
@@ -499,17 +523,17 @@ const Dashboard = () => {
                 addToast('Generating PDF file...', 'info');
                 setTimeout(() => addToast('Executive_Report_2026.pdf downloaded', 'success'), 1000);
               }}
-              className="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold rounded-lg cursor-pointer"
+              className="px-4 py-2 bg-accent dark:bg-accent-dark hover:bg-accent/90 dark:hover:bg-accent-dark/90 text-white text-sm font-semibold rounded-lg cursor-pointer transition-colors duration-200"
             >
               Export as PDF
             </button>
           </>
         }
       >
-        <div className="text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto bg-slate-50 dark:bg-slate-850 p-4 border rounded-xl font-semibold select-text">
+        <div className="text-xs text-text-primary dark:text-text-primary-dark whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto bg-background dark:bg-background-dark p-4 border border-border dark:border-border-dark rounded-xl font-semibold select-text transition-colors duration-200">
           {aiReportContent.split('\n').map((line, idx) => {
             if (line.startsWith('###') || line.startsWith('####')) {
-              return <h4 key={idx} className="font-extrabold text-sm mt-3 mb-1 uppercase tracking-wider block text-slate-900 dark:text-white">{line.replace(/#/g, '').trim()}</h4>;
+              return <h4 key={idx} className="font-extrabold text-sm mt-3 mb-1 uppercase tracking-wider block text-text-primary dark:text-text-primary-dark">{line.replace(/#/g, '').trim()}</h4>;
             }
             const boldParts = line.split('**');
             return (

@@ -73,17 +73,66 @@ class AIService {
    */
   async processNaturalLanguageQuery(queryText) {
     const queryLower = queryText.toLowerCase();
+    const { PipelineSegment, InspectionLog, Risk } = require('../models');
 
     // 1. Fetch data from DB to search against
     const projects = await Project.findAll({
       include: [{ model: Task, as: 'tasks' }, { model: Risk, as: 'risks' }]
     });
 
+    const segments = await PipelineSegment.findAll({
+      include: [
+        { model: InspectionLog, as: 'inspections' },
+        { model: Risk, as: 'risks' }
+      ]
+    });
+
     let matchedProjects = [];
+    let matchedSegments = [];
     let answer = '';
 
-    // 2. Simple Heuristic Router
-    if (queryLower.includes('risk') || queryLower.includes('delayed') || queryLower.includes('behind schedule')) {
+    // 2. Pipeline Heuristic Router
+    if (queryLower.includes('overdue inspection') || queryLower.includes('pipeline inspection')) {
+      const today = new Date().toISOString().split('T')[0];
+      matchedSegments = segments.filter(seg => 
+        seg.inspections?.some(ins => ins.status === 'Overdue' || (ins.status === 'Scheduled' && ins.scheduledDate < today))
+      );
+
+      if (matchedSegments.length > 0) {
+        answer = `I found **${matchedSegments.length} pipeline segments** with overdue inspections:\n\n` +
+          matchedSegments.map(s => `- **${s.name}** (${s.region}): Last scheduled inspection is overdue. Current segment status is **${s.status}**.`).join('\n') +
+          `\n\nI recommend assigning Priya Patel to clear these thickness profiling logs immediately.`;
+      } else {
+        answer = `All pipeline segment inspections are currently up to date. No overdue logs found.`;
+      }
+    }
+    else if (queryLower.includes('critical segment') || queryLower.includes('pipeline status')) {
+      matchedSegments = segments.filter(s => s.status === 'Critical' || s.status === 'ShutDown');
+
+      if (matchedSegments.length > 0) {
+        answer = `I identified **${matchedSegments.length} segments** requiring immediate technical response:\n\n` +
+          matchedSegments.map(s => `- **${s.name}** (${s.region}): Status is **${s.status}**, Material: ${s.material}, Diameter: ${s.diameterInches}".`).join('\n') +
+          `\n\nThese links are currently flagged for corrosion or pressure drop anomalies on the monitoring desk.`;
+      } else {
+        answer = `All segments are operating within safe pressure limits. No critical status flags are logged.`;
+      }
+    }
+    else if (queryLower.includes('pipeline risk') || (queryLower.includes('risk') && queryLower.includes('pipeline'))) {
+      const pipelineRisks = await Risk.findAll({
+        where: { segmentId: { [require('sequelize').Op.ne]: null } },
+        include: [{ model: PipelineSegment, as: 'segment', attributes: ['id', 'name'] }]
+      });
+
+      if (pipelineRisks.length > 0) {
+        answer = `I found **${pipelineRisks.length} active risks** registered on pipeline infrastructure:\n\n` +
+          pipelineRisks.map(r => `- **R${r.id}: ${r.title}** on **${r.segment?.name}** (Severity: **${r.riskScore}/25**, Status: **${r.status}**)`).join('\n') +
+          `\n\nMitigation plans include sleeve reinforcement welding and anode bed updates.`;
+      } else {
+        answer = `No active risk parameters are logged for the pipeline network.`;
+      }
+    }
+    // 3. Project / PMO Router
+    else if (queryLower.includes('risk') || queryLower.includes('delayed') || queryLower.includes('behind schedule')) {
       matchedProjects = projects.filter(p => p.status === 'AtRisk' || p.status === 'Delayed');
       
       if (matchedProjects.length > 0) {
@@ -124,13 +173,14 @@ class AIService {
         answer = `I processed your request, but I couldn't find a direct database match for your query. Try asking:
         \n- *"Which projects are at risk?"*
         \n- *"Show me projects in Water Treatment"*
-        \n- *"What is the most expensive project?"*`;
+        \n- *"What is the most expensive project?"*
+        \n- *"Show all segments with overdue inspections"*`;
       }
     }
 
     return {
       answer,
-      structuredData: matchedProjects.map(p => ({
+      structuredData: matchedProjects.length > 0 ? matchedProjects.map(p => ({
         id: p.id,
         name: p.name,
         clientName: p.clientName,
@@ -138,6 +188,14 @@ class AIService {
         currentPhase: p.currentPhase,
         budget: p.budget,
         budgetSpent: p.budgetSpent
+      })) : matchedSegments.map(s => ({
+        id: s.id,
+        name: s.name,
+        clientName: s.region,
+        status: s.status,
+        currentPhase: s.segmentType,
+        budget: s.diameterInches,
+        budgetSpent: s.designPressure
       }))
     };
   }

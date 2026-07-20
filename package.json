@@ -17,5 +17,8 @@
     "sequelize"
   ],
   "author": "Engineering Consultancy Demo",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
 }
