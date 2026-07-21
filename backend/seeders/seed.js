@@ -109,17 +109,17 @@ const seedDatabase = async () => {
 
     // 3. Seed CRM Clients (Module 9)
     const clientsData = [
-      { companyName: 'GAIL (India) Limited', industry: 'Infrastructure & Energy Transmission', contactPersonName: 'Aarav Sharma', contactEmail: 'aarav.sharma@gail.co.in', contactPhone: '+91-11-2617-2580', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Indian Oil Corporation (IOCL)', industry: 'Oil & Gas / Refining', contactPersonName: 'Rajesh Kumar', contactEmail: 'rajesh.kumar@indianoil.in', contactPhone: '+91-22-2644-7600', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Oil and Natural Gas Corporation (ONGC)', industry: 'Energy exploration & Subsea', contactPersonName: 'Sarah Thomas', contactEmail: 'sarah.thomas@ongc.co.in', contactPhone: '+91-11-2675-0111', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Delhi Jal Board (DJB)', industry: 'Utilities / Water Management', contactPersonName: 'Manish Verma', contactEmail: 'manish.verma@djb.gov.in', contactPhone: '+91-11-2351-1600', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Reliance Industries Limited (RIL)', industry: 'Real Estate & Energy Infrastructure', contactPersonName: 'Amit Shah', contactEmail: 'amit.shah@ril.com', contactPhone: '+91-22-3555-5000', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'DLF Limited', industry: 'Commercial Real Estate', contactPersonName: 'Vikram Sethi', contactEmail: 'vikram.sethi@dlf.in', contactPhone: '+91-124-439-6000', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'National Health Authority (NHA)', industry: 'Healthcare & Public Welfare', contactPersonName: 'Dr. Neha Gupta', contactEmail: 'neha.gupta@nha.gov.in', contactPhone: '+91-11-2346-2600', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Tata Power', industry: 'Utilities / Power Distribution', contactPersonName: 'Faisal Khan', contactEmail: 'faisal.khan@tatapower.com', contactPhone: '+91-22-6717-1000', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Mumbai Metropolitan Region Development Authority (MMRDA)', industry: 'Urban Planning / Transit', contactPersonName: 'Sanjay Joshi', contactEmail: 'sanjay.joshi@mmrda.maharashtra.gov.in', contactPhone: '+91-22-2659-4000', country: 'India', relationshipStatus: 'Active' },
-      { companyName: 'Larsen & Toubro (L&T)', industry: 'EPC Engineering', contactPersonName: 'Hrishikesh Kulkarni', contactEmail: 'hrishikesh.kulkarni@lntecc.com', contactPhone: '+91-22-6705-0505', country: 'India', relationshipStatus: 'Prospect' },
-      { companyName: 'Bharat Petroleum (BPCL)', industry: 'Energy / Petroleum Refining', contactPersonName: 'Suresh Menon', contactEmail: 'suresh.menon@bharatpetroleum.in', contactPhone: '+91-22-2271-3000', country: 'India', relationshipStatus: 'Prospect' }
+      { companyName: 'GAIL (India) Limited', industry: 'Oil & Gas / Pipeline Transmission', contactPersonName: 'Aarav Sharma', contactEmail: 'aarav.sharma@gail.co.in', contactPhone: '+91-11-2617-2580', country: 'India', relationshipStatus: 'Active' },
+      { companyName: 'Indian Oil Corporation (IOCL)', industry: 'Oil & Gas / Petroleum Refining', contactPersonName: 'Rajesh Kumar', contactEmail: 'rajesh.kumar@indianoil.in', contactPhone: '+91-22-2644-7600', country: 'India', relationshipStatus: 'Active' },
+      { companyName: 'Oil and Natural Gas Corporation (ONGC)', industry: 'Oil & Gas / Subsea Exploration', contactPersonName: 'Sarah Thomas', contactEmail: 'sarah.thomas@ongc.co.in', contactPhone: '+91-11-2675-0111', country: 'India', relationshipStatus: 'Active' },
+      { companyName: 'Saudi Aramco', industry: 'Oil & Gas / Upstream & Trunklines', contactPersonName: 'Khalid Al-Ghamdi', contactEmail: 'khalid@aramco.com', contactPhone: '+966-50-222-3333', country: 'Saudi Arabia', relationshipStatus: 'Active' },
+      { companyName: 'Reliance Industries Limited (RIL)', industry: 'Oil & Gas / Refining & Petrochemicals', contactPersonName: 'Amit Shah', contactEmail: 'amit.shah@ril.com', contactPhone: '+91-22-3555-5000', country: 'India', relationshipStatus: 'Active' },
+      { companyName: 'Oil India Limited (OIL)', industry: 'Oil & Gas / Onshore Production', contactPersonName: 'Vikram Sethi', contactEmail: 'vikram.sethi@oilindia.in', contactPhone: '+91-374-280-0500', country: 'India', relationshipStatus: 'Active' },
+      { companyName: 'Abu Dhabi National Oil Company (ADNOC)', industry: 'Oil & Gas / Offshore Operations', contactPersonName: 'Dr. Neha Gupta', contactEmail: 'neha.gupta@adnoc.ae', contactPhone: '+971-2-707-0000', country: 'UAE', relationshipStatus: 'Active' },
+      { companyName: 'QatarEnergy', industry: 'Oil & Gas / LNG Infrastructure', contactPersonName: 'Faisal Khan', contactEmail: 'faisal.khan@qatarenergy.qa', contactPhone: '+974-4400-0000', country: 'Qatar', relationshipStatus: 'Active' },
+      { companyName: 'Kuwait Petroleum Corporation (KPC)', industry: 'Oil & Gas / Downstream Refining', contactPersonName: 'Sanjay Joshi', contactEmail: 'sanjay.joshi@kpc.com.kw', contactPhone: '+965-2493-0000', country: 'Kuwait', relationshipStatus: 'Active' },
+      { companyName: 'Larsen & Toubro Hydrocarbon', industry: 'Oil & Gas EPC Engineering', contactPersonName: 'Hrishikesh Kulkarni', contactEmail: 'hrishikesh.kulkarni@lntecc.com', contactPhone: '+91-22-6705-0505', country: 'India', relationshipStatus: 'Prospect' },
+      { companyName: 'Bharat Petroleum (BPCL)', industry: 'Oil & Gas / Midstream Storage', contactPersonName: 'Suresh Menon', contactEmail: 'suresh.menon@bharatpetroleum.in', contactPhone: '+91-22-2271-3000', country: 'India', relationshipStatus: 'Prospect' }
     ];
 
     const clients = await Client.bulkCreate(clientsData);
@@ -127,12 +127,12 @@ const seedDatabase = async () => {
 
     // 4. Create Projects (clientName matches Client companyNames to link dynamically)
     const projectsData = [
-      { name: 'GAIL Hazira-Vijaipur-Jagdishpur (HVJ) Pipeline Expansion', clientName: 'GAIL (India) Limited', serviceCategory: 'PowerTransmissionDistribution', description: 'Detailed expansion design of the major trunk line and control valves.', budget: 45000000.00, budgetSpent: 12500000.00, startDate: '2026-01-10', endDate: '2027-12-30', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 3 },
-      { name: 'IOCL Koyali Refinery Chilled Water HVAC Refit', clientName: 'Indian Oil Corporation (IOCL)', serviceCategory: 'HeatingCooling', description: 'Upgrading the chilled water layout and refinery air processing blocks.', budget: 8400000.00, budgetSpent: 6200000.00, startDate: '2025-06-01', endDate: '2026-09-30', currentPhase: 'Execution', status: 'AtRisk', projectManagerId: 3 },
-      { name: 'ONGC KG Basin Subsea Grid Substation Integration', clientName: 'Oil and Natural Gas Corporation (ONGC)', serviceCategory: 'Buildings', description: 'Concealed layout designs for remote underwater operations.', budget: 18200000.00, budgetSpent: 14900000.00, startDate: '2025-08-15', endDate: '2026-11-20', currentPhase: 'Execution', status: 'Delayed', projectManagerId: 3 },
-      { name: 'Chennai Minjur Desalination Plant Expansion Layout', clientName: 'Delhi Jal Board (DJB)', serviceCategory: 'WaterTreatment', description: 'Desalination piping structural support layouts.', budget: 35000000.00, budgetSpent: 4200000.00, startDate: '2026-05-01', endDate: '2028-06-15', currentPhase: 'Design', status: 'OnTrack', projectManagerId: 4 },
-      { name: 'Yamuna Action Plan Phase 3 Wastewater Plant', clientName: 'National Health Authority (NHA)', serviceCategory: 'WastewaterTreatment', description: 'Activated biological sludge process engineering.', budget: 52000000.00, budgetSpent: 28300000.00, startDate: '2025-03-01', endDate: '2027-02-28', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 4 },
-      { name: 'DLF CyberCity Phase 3 Fire Mains Layout', clientName: 'DLF Limited', serviceCategory: 'InteriorDesign', description: 'Detailed custom piping and pressure safety bypass layouts.', budget: 6800000.00, budgetSpent: 2100000.00, startDate: '2026-02-01', endDate: '2026-12-15', currentPhase: 'Approval', status: 'OnTrack', projectManagerId: 6 }
+      { name: 'GAIL Hazira-Vijaipur-Jagdishpur (HVJ) Pipeline Expansion', clientName: 'GAIL (India) Limited', serviceCategory: 'PipelineTransmission', description: 'Detailed expansion design of the major trunk line and control valves.', budget: 45000000.00, budgetSpent: 12500000.00, startDate: '2026-01-10', endDate: '2027-12-30', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 3 },
+      { name: 'IOCL Koyali Refinery Crude Distillation Unit Feedline', clientName: 'Indian Oil Corporation (IOCL)', serviceCategory: 'GatheringDistribution', description: 'Upgrading the heavy crude supply piping layout and refinery feed blocks.', budget: 8400000.00, budgetSpent: 6200000.00, startDate: '2025-06-01', endDate: '2026-09-30', currentPhase: 'Execution', status: 'AtRisk', projectManagerId: 3 },
+      { name: 'ONGC KG Basin Subsea Deepwater Gas Gathering Pipeline', clientName: 'Oil and Natural Gas Corporation (ONGC)', serviceCategory: 'PumpValveTelemetry', description: 'Concealed layout designs for remote underwater wellhead operations.', budget: 18200000.00, budgetSpent: 14900000.00, startDate: '2025-08-15', endDate: '2026-11-20', currentPhase: 'Execution', status: 'Delayed', projectManagerId: 3 },
+      { name: 'Saudi Aramco Abqaiq-Berri Crude Trunkline Loop', clientName: 'Saudi Aramco', serviceCategory: 'PipelineTransmission', description: 'High-pressure crude trunkline loop expansion and valve telemetry.', budget: 35000000.00, budgetSpent: 4200000.00, startDate: '2026-05-01', endDate: '2028-06-15', currentPhase: 'Design', status: 'OnTrack', projectManagerId: 4 },
+      { name: 'ADNOC Offshore Gas Compression Platform Pipeline', clientName: 'Abu Dhabi National Oil Company (ADNOC)', serviceCategory: 'GatheringDistribution', description: 'Offshore high-yield gas gathering and compressor tie-in pipeline.', budget: 52000000.00, budgetSpent: 28300000.00, startDate: '2025-03-01', endDate: '2027-02-28', currentPhase: 'Execution', status: 'OnTrack', projectManagerId: 4 },
+      { name: 'BPCL Uran Terminal LPG Pressure Regulation Bypass', clientName: 'Bharat Petroleum (BPCL)', serviceCategory: 'CathodicProtection', description: 'Detailed custom piping and pressure safety bypass layouts.', budget: 6800000.00, budgetSpent: 2100000.00, startDate: '2026-02-01', endDate: '2026-12-15', currentPhase: 'Approval', status: 'OnTrack', projectManagerId: 6 }
     ];
 
     const projects = await Project.bulkCreate(projectsData);
@@ -140,9 +140,9 @@ const seedDatabase = async () => {
 
     // 5. Seed ProjectTeamMembers
     const teamAssignments = [
-      { projectId: 1, employeeId: 7, roleOnProject: 'Lead MEP Liaison', allocationPercent: 25 },
+      { projectId: 1, employeeId: 7, roleOnProject: 'Lead Piping Liaison', allocationPercent: 25 },
       { projectId: 1, employeeId: 8, roleOnProject: 'Lead BIM Coordinator', allocationPercent: 50 },
-      { projectId: 1, employeeId: 9, roleOnProject: 'Lead Structural Engineer', allocationPercent: 100 }
+      { projectId: 1, employeeId: 9, roleOnProject: 'Lead Corrosion Engineer', allocationPercent: 100 }
     ];
     await ProjectTeamMember.bulkCreate(teamAssignments);
 
@@ -153,18 +153,18 @@ const seedDatabase = async () => {
     });
 
     const proposalsData = [
-      { clientId: clientMap['Delhi Jal Board (DJB)'], title: 'Delhi Jal Board Okhla Wastewater Treatment Plant Extension', serviceCategory: 'WastewaterTreatment', estimatedValue: 12400000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-05-15', decisionDate: null },
-      { clientId: clientMap['Reliance Industries Limited (RIL)'], title: 'RIL Jamnagar Solar Array Storage Containment', serviceCategory: 'PowerTransmissionDistribution', estimatedValue: 4800000.00, status: 'Sent', createdById: 4, sentDate: '2026-06-10', decisionDate: null },
-      { clientId: clientMap['DLF Limited'], title: 'DLF CyberCity Phase 4 BIM Coordination Contract', serviceCategory: 'BIM', estimatedValue: 6500000.00, status: 'Won', createdById: 3, sentDate: '2026-03-01', decisionDate: '2026-04-15' },
-      { clientId: clientMap['Larsen & Toubro (L&T)'], title: 'L&T Mumbai Metro Line 4 Digital Twin Models', serviceCategory: 'BIM', estimatedValue: 3200000.00, status: 'Draft', createdById: 9, sentDate: null, decisionDate: null },
-      { clientId: clientMap['GAIL (India) Limited'], title: 'GAIL HVJ Structural Loop Segment Analysis', serviceCategory: 'Buildings', estimatedValue: 18500000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-06-18', decisionDate: null },
-      { clientId: clientMap['National Health Authority (NHA)'], title: 'NHA Apollo Hospital Isolation Units Engineering', serviceCategory: 'Healthcare', estimatedValue: 7200000.00, status: 'Sent', createdById: 5, sentDate: '2026-07-02', decisionDate: null },
-      { clientId: clientMap['Oil and Natural Gas Corporation (ONGC)'], title: 'ONGC Dehradun HQ Geothermal HVAC Upgrade', serviceCategory: 'HeatingCooling', estimatedValue: 9800000.00, status: 'Won', createdById: 3, sentDate: '2026-04-20', decisionDate: '2026-06-01' },
-      { clientId: clientMap['Mumbai Metropolitan Region Development Authority (MMRDA)'], title: 'MMRDA Thane Canal Gravity Expansions', serviceCategory: 'WastewaterTreatment', estimatedValue: 14500000.00, status: 'Lost', createdById: 4, sentDate: '2026-02-15', decisionDate: '2026-04-30' },
-      { clientId: clientMap['Indian Oil Corporation (IOCL)'], title: 'IOCL Koyali Refinery District Chilled Loop Overhaul', serviceCategory: 'HeatingCooling', estimatedValue: 24000000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-06-01', decisionDate: null },
-      { clientId: clientMap['GAIL (India) Limited'], title: 'GAIL Vijaipur Utility Pressure Loop Zoning', serviceCategory: 'UrbanPlanning', estimatedValue: 8600000.00, status: 'Won', createdById: 4, sentDate: '2026-01-10', decisionDate: '2026-02-28' },
-      { clientId: clientMap['Bharat Petroleum (BPCL)'], title: 'BPCL Mumbai Refinery Substation Cabling Models', serviceCategory: 'PowerTransmissionDistribution', estimatedValue: 11000000.00, status: 'Draft', createdById: 8, sentDate: null, decisionDate: null },
-      { clientId: clientMap['Tata Power'], title: 'Tata Power Delhi Substation Modular Grid Extensions', serviceCategory: 'BIM', estimatedValue: 5300000.00, status: 'Draft', createdById: 9, sentDate: null, decisionDate: null }
+      { clientId: clientMap['GAIL (India) Limited'], title: 'GAIL Hazira Compression Station Upgrade & Telemetry', serviceCategory: 'PumpValveTelemetry', estimatedValue: 12400000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-05-15', decisionDate: null },
+      { clientId: clientMap['Reliance Industries Limited (RIL)'], title: 'RIL Jamnagar Heavy Crude Offloading Terminal Pipeline', serviceCategory: 'PipelineTransmission', estimatedValue: 14800000.00, status: 'Sent', createdById: 4, sentDate: '2026-06-10', decisionDate: null },
+      { clientId: clientMap['Saudi Aramco'], title: 'Saudi Aramco Abqaiq Gas Trunkline Smart Pigging & Cathodic Protection', serviceCategory: 'CathodicProtection', estimatedValue: 16500000.00, status: 'Won', createdById: 3, sentDate: '2026-03-01', decisionDate: '2026-04-15' },
+      { clientId: clientMap['Larsen & Toubro Hydrocarbon'], title: 'L&T Hydrocarbon Platform Offshore Flowline Digital Twin', serviceCategory: 'PumpValveTelemetry', estimatedValue: 13200000.00, status: 'Draft', createdById: 9, sentDate: null, decisionDate: null },
+      { clientId: clientMap['GAIL (India) Limited'], title: 'GAIL HVJ Trunk Loop Gas Pipeline Segment Integrity', serviceCategory: 'PipelineTransmission', estimatedValue: 18500000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-06-18', decisionDate: null },
+      { clientId: clientMap['Abu Dhabi National Oil Company (ADNOC)'], title: 'ADNOC Ruwais Refinery Offshore Crude Intake Flowlines', serviceCategory: 'GatheringDistribution', estimatedValue: 17200000.00, status: 'Sent', createdById: 5, sentDate: '2026-07-02', decisionDate: null },
+      { clientId: clientMap['Oil and Natural Gas Corporation (ONGC)'], title: 'ONGC Mumbai High Offshore Crude Pumping Substation Overhaul', serviceCategory: 'PumpValveTelemetry', estimatedValue: 15800000.00, status: 'Won', createdById: 3, sentDate: '2026-04-20', decisionDate: '2026-06-01' },
+      { clientId: clientMap['Kuwait Petroleum Corporation (KPC)'], title: 'KPC Mina Al-Ahmadi Hydrocarbon Storage Trunk Expansion', serviceCategory: 'PipelineTransmission', estimatedValue: 14500000.00, status: 'Lost', createdById: 4, sentDate: '2026-02-15', decisionDate: '2026-04-30' },
+      { clientId: clientMap['Indian Oil Corporation (IOCL)'], title: 'IOCL Koyali Refinery Heavy Crude Distillation Feedline Expansion', serviceCategory: 'PipelineTransmission', estimatedValue: 24000000.00, status: 'Negotiation', createdById: 3, sentDate: '2026-06-01', decisionDate: null },
+      { clientId: clientMap['GAIL (India) Limited'], title: 'GAIL Vijaipur Trunk Line Gas Telemetry & Valve Zoning', serviceCategory: 'LeakDetectionSensors', estimatedValue: 8600000.00, status: 'Won', createdById: 4, sentDate: '2026-01-10', decisionDate: '2026-02-28' },
+      { clientId: clientMap['Bharat Petroleum (BPCL)'], title: 'BPCL Uran Terminal Hydrocarbon Gas Detection & Cathodic Protection', serviceCategory: 'CathodicProtection', estimatedValue: 11000000.00, status: 'Draft', createdById: 8, sentDate: null, decisionDate: null },
+      { clientId: clientMap['QatarEnergy'], title: 'QatarEnergy Ras Laffan North Field LNG Flowline Telemetry Integration', serviceCategory: 'LeakDetectionSensors', estimatedValue: 19500000.00, status: 'Draft', createdById: 9, sentDate: null, decisionDate: null }
     ];
 
     await Proposal.bulkCreate(proposalsData);

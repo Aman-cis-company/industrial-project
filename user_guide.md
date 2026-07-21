@@ -31,7 +31,36 @@ Pipeline PMO allows you to track construction contracts and expansions (e.g. *Ha
 
 ---
 
-## 📋 3. How to Create and Track Safety Tasks
+## 💼 3. How to Manage Client CRM & Contract Proposals
+
+The **Client CRM & Proposals** module allows commercial managers and PMO teams to maintain client accounts, track business development opportunities, and manage contract proposals from initial drafting through negotiation to execution.
+
+### **Purpose & Key Objectives**
+* **Client Relationship Management**: Maintain directory profiles of energy companies, infrastructure authorities, and client organizations (e.g., *Saudi Aramco*, *NEOM Authority*, *National Water Company*, *Red Sea Global*).
+* **Pipeline Opportunity Tracking**: Monitor multi-million SAR contract proposals through lifecycle stages from initial drafting to won/signed contracts.
+* **Commercial Performance Metrics**: Track aggregate pipeline value, win conversion rates, and total won contract revenue.
+
+### **What Information it Displays**
+1. **Commercial KPI Cards**:
+   * **Total Pipeline Value**: Aggregate estimated contract value (in SAR) across all open proposal stages.
+   * **Negotiation Win Rate**: Conversion percentage (%) for negotiated proposals.
+   * **Won Contract Values**: Total monetary value of closed/won contracts.
+2. **Interactive Proposal Pipeline (Kanban Board)**:
+   * **Stages**: Divided into **Drafting**, **Sent to Client**, **Under Negotiation**, **Won / Signed**, and **Lost / Closed**.
+   * **Proposal Cards**: Display service category (*Pipeline Transmission*, *BIM*, *Cathodic Protection*, etc.), proposal title, client firm, estimated contract value (SAR M), and stage selector.
+3. **Clients Database Table**:
+   * Displays client organizations, industry sector, primary contact person (name & email), relationship status (🟢 *Active*, 🟡 *Prospect*, ⚪ *Inactive*), and active project counts.
+4. **Client Account Profile (Drawer)**:
+   * Displays company overview, primary contact details, linked active/past engineering projects with budget breakdowns, and historical proposal dossier records.
+
+### **What to Check & Key Actions**
+* **Drafting a Proposal**: Click **"Draft Proposal"** at the top right. Enter proposal title, estimated value, and service category. Select an existing client or toggle *"Create New Client"* to add a client profile inline.
+* **Advancing Proposal Stages**: Move a proposal to another stage by updating the stage dropdown directly on its Kanban card.
+* **Inspecting Client Accounts**: Switch to the **Clients Database** tab and click any company name (or *"View details"*) to open the client profile drawer and check linked projects and proposal history.
+
+---
+
+## 📋 4. How to Create and Track Safety Tasks
 
 Tasks are managed in a Kanban board inside each project workspace:
 1. Go to **Pipeline PMO & Projects** in the sidebar, and click on any active pipeline project.
@@ -47,7 +76,7 @@ Tasks are managed in a Kanban board inside each project workspace:
 
 ---
 
-## 👥 4. How to Manage Crew & Specialist Allocations
+## 👥 5. How to Manage Crew & Specialist Allocations
 
 Ensure your engineering crew is not overloaded before sending them to the field:
 1. **Allocate Team Members**:
@@ -65,7 +94,7 @@ Ensure your engineering crew is not overloaded before sending them to the field:
 
 ---
 
-## 📝 5. How to Manage P&ID Drawings & DMS Documents
+## 📝 6. How to Manage P&ID Drawings & DMS Documents
 
 Store, version, and review technical pipeline alignment sheets, drawings, and permits:
 1. Go to **Pipeline DMS Drawings** in the sidebar (or open the **Documents** tab inside any specific project page).
@@ -77,7 +106,7 @@ Store, version, and review technical pipeline alignment sheets, drawings, and pe
 
 ---
 
-## 📊 6. How to Monitor Live Pipelines (IoT Telemetry & Map)
+## 📊 7. How to Monitor Live Pipelines (IoT Telemetry & Map)
 
 Monitor IoT sensor data, inspect segments, and resolve leak incidents in real-time:
 1. **Interactive Telemetry Map**:
@@ -91,7 +120,7 @@ Monitor IoT sensor data, inspect segments, and resolve leak incidents in real-ti
 
 ---
 
-## 🤖 7. How to Use the Pipeline AI Copilot
+## 🤖 8. How to Use the Pipeline AI Copilot
 
 Use AI to query project databases, compile reports, and draft proposals:
 1. Go to **Pipeline AI Copilot** in the sidebar.
@@ -103,7 +132,7 @@ Use AI to query project databases, compile reports, and draft proposals:
 
 ---
 
-## ⚙️ 8. Personal Settings & Profile
+## ⚙️ 9. Personal Settings & Profile
 
 Manage your avatar, email, and password:
 1. Go to **Settings** under the *Admin* sidebar group.

@@ -52,7 +52,7 @@ const Proposals = () => {
     // Inline Client creation details
     isNewClient: false,
     newCompanyName: '',
-    newIndustry: 'Energy & Utilities',
+    newIndustry: 'Oil & Gas / Pipeline Transmission',
     newContactName: '',
     newContactEmail: ''
   });
@@ -81,42 +81,47 @@ const Proposals = () => {
       if (clientData.success) setClients(clientData.data);
     } catch (err) {
       console.warn('Backend server offline. Setting mock CRM datasets.');
-      // Local seed fallbacks
+      // Local seed fallbacks - 100% Oil & Gas Companies
       const mockClients = [
-        { id: 1, companyName: 'NEOM Authority', industry: 'Infrastructure & Smart Cities', contactPersonName: 'Fahad Al-Qahtani', contactEmail: 'fahad@neom.com', contactPhone: '+966-50-111-2222', relationshipStatus: 'Active', projectsCount: 2 },
-        { id: 2, companyName: 'Saudi Aramco', industry: 'Oil & Gas / Energy', contactPersonName: 'Khalid Al-Ghamdi', contactEmail: 'khalid@aramco.com', contactPhone: '+966-50-222-3333', relationshipStatus: 'Active', projectsCount: 1 },
-        { id: 3, companyName: 'Diriyah Gate Development Authority (DGDA)', industry: 'Tourism & Real Estate Heritage', contactPersonName: 'Sarah Al-Saud', contactEmail: 'sarah@dgda.gov.sa', contactPhone: '+966-50-333-4444', relationshipStatus: 'Active', projectsCount: 1 },
-        { id: 4, companyName: 'National Water Company (NWC)', industry: 'Utilities / Water Management', contactPersonName: 'Mohammed Al-Harbi', contactEmail: 'mohammed@nwc.com.sa', contactPhone: '+966-50-444-5555', relationshipStatus: 'Active', projectsCount: 1 },
-        { id: 5, companyName: 'Red Sea Global (RSG)', industry: 'Real Estate & Hospitality', contactPersonName: 'Abdullah Al-Dossary', contactEmail: 'abdullah@redseaglobal.com', contactPhone: '+966-50-555-6666', relationshipStatus: 'Active', projectsCount: 1 },
-        { id: 6, companyName: 'ROSHN Real Estate Co.', industry: 'Real Estate Development', contactPersonName: 'Yousef Al-Malki', contactEmail: 'yousef@roshn.sa', contactPhone: '+966-50-666-7777', relationshipStatus: 'Active', projectsCount: 1 },
-        { id: 11, companyName: 'Jabal Omar Development', industry: 'Real Estate & Hospitality', contactPersonName: 'Hisham Al-Farsi', contactEmail: 'hisham@jabalomar.com.sa', contactPhone: '+966-50-111-3333', relationshipStatus: 'Prospect', projectsCount: 0 }
+        { id: 1, companyName: 'Saudi Aramco', industry: 'Oil & Gas / Upstream & Trunklines', contactPersonName: 'Khalid Al-Ghamdi', contactEmail: 'khalid@aramco.com', contactPhone: '+966-50-222-3333', relationshipStatus: 'Active', projectsCount: 2 },
+        { id: 2, companyName: 'GAIL (India) Limited', industry: 'Oil & Gas / Gas Transmission', contactPersonName: 'Aarav Sharma', contactEmail: 'aarav.sharma@gail.co.in', contactPhone: '+91-11-2617-2580', relationshipStatus: 'Active', projectsCount: 3 },
+        { id: 3, companyName: 'Oil and Natural Gas Corporation (ONGC)', industry: 'Oil & Gas / Subsea & Offshore', contactPersonName: 'Sarah Thomas', contactEmail: 'sarah.thomas@ongc.co.in', contactPhone: '+91-11-2675-0111', relationshipStatus: 'Active', projectsCount: 1 },
+        { id: 4, companyName: 'Indian Oil Corporation (IOCL)', industry: 'Oil & Gas / Petroleum Refining', contactPersonName: 'Rajesh Kumar', contactEmail: 'rajesh.kumar@indianoil.in', contactPhone: '+91-22-2644-7600', relationshipStatus: 'Active', projectsCount: 1 },
+        { id: 5, companyName: 'Reliance Industries Limited (RIL Petroleum)', industry: 'Oil & Gas / Refining & Petrochemicals', contactPersonName: 'Amit Shah', contactEmail: 'amit.shah@ril.com', contactPhone: '+91-22-3555-5000', relationshipStatus: 'Active', projectsCount: 1 },
+        { id: 6, companyName: 'Bharat Petroleum (BPCL)', industry: 'Oil & Gas / Midstream Storage', contactPersonName: 'Suresh Menon', contactEmail: 'suresh.menon@bharatpetroleum.in', contactPhone: '+91-22-2271-3000', relationshipStatus: 'Active', projectsCount: 1 },
+        { id: 7, companyName: 'Oil India Limited (OIL)', industry: 'Oil & Gas / Onshore Production', contactPersonName: 'Vikram Sethi', contactEmail: 'vikram.sethi@oilindia.in', contactPhone: '+91-374-280-0500', relationshipStatus: 'Prospect', projectsCount: 0 }
       ];
 
       const mockPipeline = {
         Draft: [
-          { id: 4, title: 'Jabal Omar Boutique Hotel Digital Twin models', serviceCategory: 'BIM', estimatedValue: 3200000.00, status: 'Draft', client: { companyName: 'Jabal Omar Development' } }
+          { id: 4, title: 'BPCL Uran Terminal Hydrocarbon Gas Detection & Cathodic Protection', serviceCategory: 'CathodicProtection', estimatedValue: 11000000.00, status: 'Draft', client: { companyName: 'Bharat Petroleum (BPCL)' } },
+          { id: 12, title: 'Oil India Digboi Feedstock Branch Line Overhaul', serviceCategory: 'PipelineTransmission', estimatedValue: 8200000.00, status: 'Draft', client: { companyName: 'Oil India Limited (OIL)' } }
         ],
         Sent: [
-          { id: 2, title: 'Red Sea Resort Solar array battery storage', serviceCategory: 'PowerTransmissionDistribution', estimatedValue: 4800000.00, status: 'Sent', client: { companyName: 'Red Sea Global (RSG)' } }
+          { id: 2, title: 'RIL Jamnagar Heavy Crude Offloading Terminal Pipeline', serviceCategory: 'PipelineTransmission', estimatedValue: 14800000.00, status: 'Sent', client: { companyName: 'Reliance Industries Limited (RIL Petroleum)' } },
+          { id: 6, title: 'ONGC KG Basin Subsea Wellhead Flowline Expansion', serviceCategory: 'PumpValveTelemetry', estimatedValue: 19200000.00, status: 'Sent', client: { companyName: 'Oil and Natural Gas Corporation (ONGC)' } }
         ],
         Negotiation: [
-          { id: 1, title: 'Wastewater Treatment Plant Extension Phase 3', serviceCategory: 'WastewaterTreatment', estimatedValue: 12400000.00, status: 'Negotiation', client: { companyName: 'National Water Company (NWC)' } },
-          { id: 5, title: 'NEOM Spine structural tunnel segment analysis', serviceCategory: 'Buildings', estimatedValue: 18500000.00, status: 'Negotiation', client: { companyName: 'NEOM Authority' } }
+          { id: 1, title: 'GAIL Hazira Compression Station Upgrade & Telemetry', serviceCategory: 'PumpValveTelemetry', estimatedValue: 12400000.00, status: 'Negotiation', client: { companyName: 'GAIL (India) Limited' } },
+          { id: 5, title: 'GAIL HVJ Trunk Loop Gas Pipeline Segment Integrity', serviceCategory: 'PipelineTransmission', estimatedValue: 18500000.00, status: 'Negotiation', client: { companyName: 'GAIL (India) Limited' } },
+          { id: 9, title: 'IOCL Koyali Refinery Heavy Crude Distillation Feedline Expansion', serviceCategory: 'PipelineTransmission', estimatedValue: 24000000.00, status: 'Negotiation', client: { companyName: 'Indian Oil Corporation (IOCL)' } }
         ],
         Won: [
-          { id: 3, title: 'ROSHN Towers Modular BIM Coordination contract', serviceCategory: 'BIM', estimatedValue: 6500000.00, status: 'Won', client: { companyName: 'ROSHN Real Estate Co.' } }
+          { id: 3, title: 'Saudi Aramco Abqaiq Gas Trunkline Smart Pigging & Cathodic Protection', serviceCategory: 'CathodicProtection', estimatedValue: 16500000.00, status: 'Won', client: { companyName: 'Saudi Aramco' } },
+          { id: 7, title: 'ONGC Mumbai High Offshore Crude Pumping Substation Overhaul', serviceCategory: 'PumpValveTelemetry', estimatedValue: 15800000.00, status: 'Won', client: { companyName: 'Oil and Natural Gas Corporation (ONGC)' } },
+          { id: 10, title: 'GAIL Vijaipur Trunk Line Gas Telemetry & Valve Zoning', serviceCategory: 'LeakDetectionSensors', estimatedValue: 8600000.00, status: 'Won', client: { companyName: 'GAIL (India) Limited' } }
         ],
         Lost: [
-          { id: 8, title: 'Al-Khobar Municipality canal expansions', serviceCategory: 'WastewaterTreatment', estimatedValue: 14500000.00, status: 'Lost', client: { companyName: 'National Water Company (NWC)' } }
+          { id: 8, title: 'IOCL Gujarat Pipeline Network Pressure Relief & Scraper Trap Refit', serviceCategory: 'RegulatoryCompliance', estimatedValue: 14500000.00, status: 'Lost', client: { companyName: 'Indian Oil Corporation (IOCL)' } }
         ]
       };
 
       setClients(mockClients);
       setPipelineData({
         pipeline: mockPipeline,
-        totalValue: 59900000.00,
-        winRate: 50,
-        wonValue: 6500000.00
+        totalValue: 163500000.00,
+        winRate: 75,
+        wonValue: 40900000.00
       });
     } finally {
       setLoading(false);
@@ -143,14 +148,14 @@ const Proposals = () => {
         throw new Error(data.message);
       }
     } catch (err) {
-      // Mock Client details histories
+      // Mock Client details histories (Oil & Gas projects)
       setClientDetails({
         client,
         proposals: [
-          { id: 101, title: 'Substation underground cabling survey', serviceCategory: 'PowerTransmissionDistribution', estimatedValue: 8500000, status: 'Won', sentDate: '2026-04-10' }
+          { id: 101, title: 'Trunkline cathodic protection survey & telemetry', serviceCategory: 'CathodicProtection', estimatedValue: 16500000, status: 'Won', sentDate: '2026-04-10' }
         ],
         projects: [
-          { id: 1, name: 'NEOM Spine Tunnel Structural Design', currentPhase: 'Execution', status: 'OnTrack', budget: 45000000 }
+          { id: 1, name: 'GAIL Hazira-Vijaipur-Jagdishpur (HVJ) Pipeline Expansion', currentPhase: 'Execution', status: 'OnTrack', budget: 45000000 }
         ]
       });
     } finally {

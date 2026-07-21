@@ -17,6 +17,12 @@ const Proposal = sequelize.define('Proposal', {
   },
   serviceCategory: {
     type: DataTypes.ENUM(
+      'PipelineTransmission',
+      'GatheringDistribution',
+      'PumpValveTelemetry',
+      'LeakDetectionSensors',
+      'CathodicProtection',
+      'RegulatoryCompliance',
       'Buildings',
       'UrbanPlanning',
       'HeatingCooling',
