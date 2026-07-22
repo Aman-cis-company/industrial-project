@@ -43,6 +43,7 @@ const Approvals = () => {
   // Details drawer
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [newCommentText, setNewCommentText] = useState('');
 
   // Fetch pending and workflows
   const fetchApprovalsData = async () => {
@@ -176,6 +177,65 @@ const Approvals = () => {
 
       addToast(`Action committed (Demo Cache): ${actionData.status}`, 'success');
       setIsActionModalOpen(false);
+    }
+  };
+
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!newCommentText.trim()) return;
+
+    try {
+      const res = await fetch(`${apiUrl}/approvals/${selectedWorkflow.id}/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ commentText: newCommentText })
+      });
+      const data = await res.json();
+      if (data.success) {
+        let comments = [];
+        try {
+          comments = JSON.parse(selectedWorkflow.discussionComments || '[]');
+        } catch (err) {
+          comments = [];
+        }
+        const updatedComments = [...comments, data.data];
+        const updatedWorkflow = {
+          ...selectedWorkflow,
+          discussionComments: JSON.stringify(updatedComments)
+        };
+        setSelectedWorkflow(updatedWorkflow);
+        setWorkflows(prev => prev.map(w => w.id === selectedWorkflow.id ? updatedWorkflow : w));
+        setNewCommentText('');
+        addToast('Comment added successfully', 'success');
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      const mockComment = {
+        id: Date.now(),
+        userName: user?.name || 'Director',
+        userRole: user?.role || 'PMO Director',
+        commentText: newCommentText.trim(),
+        timestamp: new Date().toISOString()
+      };
+      let comments = [];
+      try {
+        comments = JSON.parse(selectedWorkflow?.discussionComments || '[]');
+      } catch (err) {
+        comments = [];
+      }
+      const updatedComments = [...comments, mockComment];
+      const updatedWorkflow = {
+        ...selectedWorkflow,
+        discussionComments: JSON.stringify(updatedComments)
+      };
+      setSelectedWorkflow(updatedWorkflow);
+      setWorkflows(prev => prev.map(w => w.id === selectedWorkflow.id ? updatedWorkflow : w));
+      setNewCommentText('');
+      addToast('Comment added (Demo Cache)', 'success');
     }
   };
 
@@ -472,6 +532,67 @@ const Approvals = () => {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Discussion & Clarification Notes */}
+            <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-450 dark:text-slate-550 flex items-center gap-1.5">
+                <GitCommit className="w-4 h-4 text-teal-500" />
+                Workflow Discussion & Notes
+              </h4>
+
+              {/* Discussion messages list */}
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                {(() => {
+                  let comments = [];
+                  try {
+                    comments = JSON.parse(selectedWorkflow.discussionComments || '[]');
+                  } catch (e) {
+                    comments = [];
+                  }
+
+                  if (comments.length === 0) {
+                    return (
+                      <p className="text-xs text-slate-400 italic py-2">
+                        No discussion notes logged. Use the form below to start.
+                      </p>
+                    );
+                  }
+
+                  return comments.map((comm) => (
+                    <div key={comm.id} className="bg-slate-50 dark:bg-slate-850 p-3 rounded-lg border border-slate-100 dark:border-slate-800 space-y-1 text-xs">
+                      <div className="flex justify-between items-center text-[10px] text-slate-400">
+                        <span className="font-semibold text-slate-700 dark:text-slate-350">
+                          {comm.userName} ({comm.userRole})
+                        </span>
+                        <span className="font-technical">
+                          {new Date(comm.timestamp).toISOString().split('T')[0]} {new Date(comm.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{comm.commentText}</p>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              {/* Discussion post form */}
+              <form onSubmit={handleAddComment} className="space-y-2 pt-2">
+                <textarea
+                  rows={2}
+                  value={newCommentText}
+                  onChange={(e) => setNewCommentText(e.target.value)}
+                  placeholder="Ask for clarification or log a review note..."
+                  className="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-slate-900 dark:text-white"
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold rounded-md shadow-sm cursor-pointer select-none"
+                  >
+                    Post Note
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

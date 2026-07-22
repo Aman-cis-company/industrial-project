@@ -23,6 +23,11 @@ const ApprovalWorkflow = sequelize.define('ApprovalWorkflow', {
     type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'),
     allowNull: false,
     defaultValue: 'Pending'
+  },
+  discussionComments: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: '[]'
   }
 });
 

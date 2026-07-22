@@ -63,6 +63,8 @@ const ScoreColors = (score) => {
   return 'bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 border border-teal-100';
 };
 
+const PHASES = ['Design', 'Approval', 'Execution', 'Handover', 'Completed'];
+
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -135,6 +137,35 @@ const ProjectDetail = () => {
     status: ''
   });
 
+  // Workflow Trigger State
+  const [isTriggerWorkflowOpen, setIsTriggerWorkflowOpen] = useState(false);
+  const [workflowForm, setWorkflowForm] = useState({
+    name: '',
+    phaseTrigger: 'Design→Approval',
+    approverChain: [
+      { approverRole: 'Project Manager', approverId: '' }
+    ]
+  });
+
+  useEffect(() => {
+    if (project) {
+      const currentIdx = PHASES.indexOf(project.currentPhase);
+      const nextPhase = currentIdx < PHASES.length - 1 ? PHASES[currentIdx + 1] : null;
+      const defaultTrigger = nextPhase ? `${project.currentPhase}→${nextPhase}` : 'Design→Approval';
+      const defaultName = nextPhase 
+        ? `${project.name} Phase Gate: ${project.currentPhase} ➔ ${nextPhase}`
+        : `${project.name} Phase Gate`;
+        
+      setWorkflowForm({
+        name: defaultName,
+        phaseTrigger: defaultTrigger,
+        approverChain: [
+          { approverRole: 'Project Manager', approverId: '' }
+        ]
+      });
+    }
+  }, [project]);
+
   // Task Form State
   const [newTaskData, setNewTaskData] = useState({
     title: '',
@@ -148,9 +179,9 @@ const ProjectDetail = () => {
   const [taskErrors, setTaskErrors] = useState({});
 
   // Fetch Project Details
-  const fetchProjectDetails = async () => {
+  const fetchProjectDetails = async (forceLoad = false) => {
     try {
-      setLoading(true);
+      if (forceLoad || !project) setLoading(true);
       const projRes = await fetch(`${apiUrl}/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -301,6 +332,91 @@ const ProjectDetail = () => {
       fetchAiSummary();
     }
   }, [project]);
+
+  // Trigger Approval Workflow
+  const handleTriggerWorkflow = async (e) => {
+    e.preventDefault();
+    if (!workflowForm.name.trim()) {
+      addToast('Workflow name is required', 'warning');
+      return;
+    }
+    if (workflowForm.approverChain.length === 0) {
+      addToast('Please define at least one step in the approval chain', 'warning');
+      return;
+    }
+
+    // Format the chain to send to the backend
+    const formattedChain = workflowForm.approverChain.map(step => {
+      const formatted = {};
+      if (step.approverId) {
+        formatted.approverId = Number(step.approverId);
+      } else {
+        formatted.approverRole = step.approverRole;
+      }
+      return formatted;
+    });
+
+    try {
+      const res = await fetch(`${apiUrl}/approvals/trigger`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          projectId: Number(id),
+          phaseTrigger: workflowForm.phaseTrigger,
+          name: workflowForm.name,
+          approverChain: formattedChain
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        addToast('Approval workflow triggered successfully', 'success');
+        setIsTriggerWorkflowOpen(false);
+        fetchProjectDetails();
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      // Mock fallback: if API fails or backend is offline, update local state
+      const nextId = Date.now();
+      const mockChainSteps = workflowForm.approverChain.map((step, idx) => {
+        let name = 'Designated Approver';
+        if (step.approverId) {
+          const emp = employees.find(e => e.user?.id === Number(step.approverId));
+          if (emp) name = emp.user.name;
+        }
+        return {
+          id: nextId + idx,
+          stepOrder: idx + 1,
+          approverRole: step.approverRole || 'Reviewer',
+          status: 'Pending',
+          comments: null,
+          actionedAt: null,
+          approverUser: step.approverId ? { name } : null
+        };
+      });
+
+      const newWorkflow = {
+        id: nextId,
+        name: workflowForm.name,
+        phaseTrigger: workflowForm.phaseTrigger,
+        status: 'Pending',
+        steps: mockChainSteps,
+        discussionComments: '[]'
+      };
+
+      setProject(prev => ({
+        ...prev,
+        approvalWorkflows: [newWorkflow, ...(prev.approvalWorkflows || [])]
+      }));
+
+      addToast('Approval workflow triggered (Demo Cache)', 'success');
+      setIsTriggerWorkflowOpen(false);
+    }
+  };
 
   // Edit Project Details Submit
   const handleEditProject = async (e) => {
@@ -750,6 +866,91 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleUpdateRisk = async (riskId, updates) => {
+    try {
+      const res = await fetch(`${apiUrl}/risks/${riskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Risk updated successfully', 'success');
+        fetchProjectDetails();
+        if (selectedRisk && selectedRisk.id === riskId) {
+          let updatedOwner = selectedRisk.owner;
+          if (updates.ownerId !== undefined) {
+            const teamMem = project.team.find(m => m.employeeId === Number(updates.ownerId));
+            if (teamMem) {
+              updatedOwner = teamMem.employee;
+            }
+          }
+          setSelectedRisk(prev => {
+            const merged = { ...prev, ...updates, owner: updatedOwner };
+            merged.riskScore = Number(merged.probability) * Number(merged.impact);
+            return merged;
+          });
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      let updatedOwner = selectedRisk?.owner;
+      if (updates.ownerId !== undefined) {
+        const teamMem = project.team.find(m => m.employeeId === Number(updates.ownerId));
+        if (teamMem) {
+          updatedOwner = teamMem.employee;
+        }
+      }
+      setProject(prev => ({
+        ...prev,
+        risks: prev.risks.map(r => {
+          if (r.id === riskId) {
+            const merged = { ...r, ...updates, owner: updatedOwner };
+            merged.riskScore = Number(merged.probability) * Number(merged.impact);
+            return merged;
+          }
+          return r;
+        })
+      }));
+      addToast('Risk updated (Demo)', 'success');
+      if (selectedRisk && selectedRisk.id === riskId) {
+        setSelectedRisk(prev => {
+          const merged = { ...prev, ...updates, owner: updatedOwner };
+          merged.riskScore = Number(merged.probability) * Number(merged.impact);
+          return merged;
+        });
+      }
+    }
+  };
+
+  const handleDeleteRisk = async (riskId) => {
+    try {
+      const res = await fetch(`${apiUrl}/risks/${riskId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Risk removed from register', 'success');
+        fetchProjectDetails();
+        setIsRiskDrawerOpen(false);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      setProject(prev => ({
+        ...prev,
+        risks: prev.risks.filter(r => r.id !== riskId)
+      }));
+      addToast('Risk removed (Demo)', 'success');
+      setIsRiskDrawerOpen(false);
+    }
+  };
+
   const handleUpdateComplianceStatus = async (itemId, nextStatus) => {
     try {
       const res = await fetch(`${apiUrl}/compliance/${itemId}`, {
@@ -825,7 +1026,7 @@ const ProjectDetail = () => {
   const totalVal = project ? parseFloat(project.budget || 0) : 0;
   const spentVal = project ? parseFloat(project.budgetSpent || 0) : 0;
   const budgetRatio = totalVal > 0 ? Math.round((spentVal / totalVal) * 100) : 0;
-  const phases = ['Design', 'Approval', 'Execution', 'Handover', 'Completed'];
+  const phases = PHASES;
   const currentPhaseIndex = project ? phases.indexOf(project.currentPhase) : 0;
 
   // Columns & Tables configs
@@ -958,6 +1159,9 @@ const ProjectDetail = () => {
     );
   }
 
+  const isPM = project.projectManager?.user?.email === currentUser?.email;
+  const isPrivileged = currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director' || isPM;
+
   const cat = CategoryConfig[project.serviceCategory] || { label: project.serviceCategory, icon: Briefcase, color: '' };
   const CatIcon = cat.icon;
 
@@ -989,14 +1193,25 @@ const ProjectDetail = () => {
           <p className="text-xs font-semibold text-slate-400 mt-1">Client: {project.clientName}</p>
         </div>
 
-        {(currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director') && (
-          <button
-            onClick={() => setIsEditProjectOpen(true)}
-            className="px-4 py-2 border border-slate-202 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-850 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-1.5 cursor-pointer shadow-xs select-none"
-          >
-            Modify Scope
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {isPrivileged && (
+            <button
+              onClick={() => setIsTriggerWorkflowOpen(true)}
+              className="px-4 py-2 bg-teal-500 hover:bg-teal-650 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm select-none border border-transparent"
+            >
+              <ShieldCheck className="w-4 h-4 text-white" />
+              Submit for Approval
+            </button>
+          )}
+          {(currentUser?.role === 'Admin' || currentUser?.role === 'PMO Director') && (
+            <button
+              onClick={() => setIsEditProjectOpen(true)}
+              className="px-4 py-2 border border-slate-202 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-850 rounded-lg text-sm font-semibold text-slate-707 dark:text-slate-350 flex items-center gap-1.5 cursor-pointer shadow-xs select-none"
+            >
+              Modify Scope
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tabs Menu */}
@@ -1385,6 +1600,177 @@ const ProjectDetail = () => {
         </form>
       </Drawer>
 
+      {/* Submit for Phase Gate Approval Drawer */}
+      <Drawer
+        isOpen={isTriggerWorkflowOpen}
+        onClose={() => setIsTriggerWorkflowOpen(false)}
+        title="Submit Phase-Gate Approval Request"
+        footer={
+          <>
+            <button
+              onClick={() => setIsTriggerWorkflowOpen(false)}
+              className="px-4 py-2 border border-slate-202 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-850 rounded-lg text-sm font-semibold text-slate-705 dark:text-slate-350 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleTriggerWorkflow}
+              className="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <ShieldCheck className="w-4 h-4 text-white" />
+              Trigger Workflow
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleTriggerWorkflow} className="space-y-5">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-technical">
+              Workflow Request Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={workflowForm.name}
+              onChange={(e) => setWorkflowForm({ ...workflowForm, name: e.target.value })}
+              className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white"
+              placeholder="e.g. Project Name Phase Gate: Design ➔ Approval"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 font-technical">
+              Phase Gate Boundary Transition *
+            </label>
+            <select
+              value={workflowForm.phaseTrigger}
+              onChange={(e) => setWorkflowForm({ ...workflowForm, phaseTrigger: e.target.value })}
+              className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
+            >
+              <option value="Design→Approval">Design ➔ Approval</option>
+              <option value="Approval→Execution">Approval ➔ Execution</option>
+              <option value="Execution→Handover">Execution ➔ Handover</option>
+              <option value="Handover→Completed">Handover ➔ Completed</option>
+            </select>
+            <p className="text-[10px] text-slate-400 mt-1">
+              Note: Once the final approver signs off, the project phase will automatically transition.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 font-technical">
+                Approver Chain Steps ({workflowForm.approverChain.length})
+              </label>
+              <button
+                type="button"
+                onClick={() => setWorkflowForm({
+                  ...workflowForm,
+                  approverChain: [...workflowForm.approverChain, { approverRole: 'Project Manager', approverId: '' }]
+                })}
+                className="text-[10px] text-teal-600 hover:text-teal-700 dark:text-teal-400 font-bold flex items-center gap-1 cursor-pointer select-none"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add Step
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {workflowForm.approverChain.map((step, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-slate-850 p-4 border border-slate-200/50 dark:border-slate-800 rounded-xl space-y-3 relative">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-500 font-technical">
+                    <span>STEP {idx + 1}</span>
+                    {workflowForm.approverChain.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = [...workflowForm.approverChain];
+                          updated.splice(idx, 1);
+                          setWorkflowForm({ ...workflowForm, approverChain: updated });
+                        }}
+                        className="text-rose-500 hover:text-rose-600 cursor-pointer"
+                        title="Remove Step"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
+                        Assign By
+                      </label>
+                      <select
+                        value={step.approverId ? 'user' : 'role'}
+                        onChange={(e) => {
+                          const updated = [...workflowForm.approverChain];
+                          if (e.target.value === 'role') {
+                            updated[idx] = { approverRole: 'Project Manager', approverId: '' };
+                          } else {
+                            updated[idx] = { approverRole: '', approverId: employees.filter(emp => emp.user).map(emp => emp.user.id)[0] || '' };
+                          }
+                          setWorkflowForm({ ...workflowForm, approverChain: updated });
+                        }}
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-900 dark:text-white cursor-pointer"
+                      >
+                        <option value="role">System Role</option>
+                        <option value="user">Specific Employee</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      {step.approverId ? (
+                        <>
+                          <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
+                            Select Employee
+                          </label>
+                          <select
+                            value={step.approverId}
+                            onChange={(e) => {
+                              const updated = [...workflowForm.approverChain];
+                              updated[idx].approverId = e.target.value;
+                              setWorkflowForm({ ...workflowForm, approverChain: updated });
+                            }}
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-900 dark:text-white cursor-pointer"
+                          >
+                            {employees.filter(emp => emp.user).map(emp => (
+                              <option key={emp.id} value={emp.user.id}>
+                                {emp.user.name} ({emp.designation})
+                              </option>
+                            ))}
+                          </select>
+                        </>
+                      ) : (
+                        <>
+                          <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
+                            System Role
+                          </label>
+                          <select
+                            value={step.approverRole}
+                            onChange={(e) => {
+                              const updated = [...workflowForm.approverChain];
+                              updated[idx].approverRole = e.target.value;
+                              setWorkflowForm({ ...workflowForm, approverChain: updated });
+                            }}
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-900 dark:text-white cursor-pointer"
+                          >
+                            <option value="Project Manager">Project Manager</option>
+                            <option value="PMO Director">PMO Director</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Engineer">Engineer</option>
+                          </select>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </form>
+      </Drawer>
+
       {/* Assign Member Modal */}
       <Modal
         isOpen={isAssignModalOpen}
@@ -1673,19 +2059,131 @@ const ProjectDetail = () => {
         isOpen={isRiskDrawerOpen}
         onClose={() => setIsRiskDrawerOpen(false)}
         title="Project Risk Dossier"
-        footer={<button onClick={() => setIsRiskDrawerOpen(false)} className="px-4 py-2 border border-slate-202 text-sm font-semibold rounded-lg text-slate-705 cursor-pointer">Close Dossier</button>}
+        footer={
+          <>
+            <button onClick={() => setIsRiskDrawerOpen(false)} className="px-4 py-2 border border-slate-202 text-sm font-semibold rounded-lg text-slate-705 cursor-pointer">Close Dossier</button>
+            <button onClick={() => handleDeleteRisk(selectedRisk.id)} className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm select-none"><Trash2 className="w-4 h-4 shrink-0" />Delete Risk</button>
+          </>
+        }
       >
         {selectedRisk && (
           <div className="space-y-6">
             <div>
               <span className="text-[10px] font-bold text-teal-650 uppercase bg-teal-50 px-2 py-0.5 rounded">{selectedRisk.category} Category</span>
-              <h3 className="text-sm font-bold text-slate-900 mt-2 leading-snug">{selectedRisk.title}</h3>
+              <div className="mt-2">
+                <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">Risk Title</label>
+                <input
+                  type="text"
+                  value={selectedRisk.title}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { title: e.target.value })}
+                  className="w-full bg-white border border-slate-202 rounded px-2.5 py-1 text-sm font-semibold text-slate-900 focus:outline-none focus:border-teal-500"
+                />
+              </div>
             </div>
+            
             <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 border border-slate-100 rounded-xl">
-              <div><span className="text-slate-455 font-bold uppercase block mb-1">Probability</span><span className="font-technical text-slate-850 dark:text-white">{selectedRisk.probability} / 5</span></div>
-              <div><span className="text-slate-455 font-bold uppercase block mb-1">Impact</span><span className="font-technical text-slate-850 dark:text-white">{selectedRisk.impact} / 5</span></div>
-              <div className="pt-2 border-t border-slate-200"><span className="text-slate-455 font-bold uppercase block mb-0.5">Calculated Score</span><span className={`inline-flex px-2 py-0.5 text-xs font-technical font-bold rounded-full ${ScoreColors(selectedRisk.riskScore)}`}>{selectedRisk.riskScore}</span></div>
-              <div className="pt-2 border-t border-slate-200"><span className="text-slate-455 font-bold uppercase block mb-0.5">Owner</span><span className="font-semibold text-slate-850 dark:text-slate-300">{selectedRisk.owner?.user?.name || 'Unassigned'}</span></div>
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Status</span>
+                <select
+                  value={selectedRisk.status || 'Open'}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { status: e.target.value })}
+                  className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer"
+                >
+                  <option value="Open">Open</option>
+                  <option value="Mitigating">Mitigating</option>
+                  <option value="Closed">Closed</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Category</span>
+                <select
+                  value={selectedRisk.category}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { category: e.target.value })}
+                  className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer"
+                >
+                  <option value="Technical">Technical</option>
+                  <option value="Financial">Financial</option>
+                  <option value="Regulatory">Regulatory</option>
+                  <option value="Schedule">Schedule</option>
+                  <option value="Safety">Safety</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Probability</span>
+                <select
+                  value={selectedRisk.probability}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { probability: Number(e.target.value) })}
+                  className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer"
+                >
+                  <option value="1">1 - Very Low</option>
+                  <option value="2">2 - Low</option>
+                  <option value="3">3 - Medium</option>
+                  <option value="4">4 - High</option>
+                  <option value="5">5 - Critical</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="text-slate-455 font-bold uppercase block mb-1">Impact</span>
+                <select
+                  value={selectedRisk.impact}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { impact: Number(e.target.value) })}
+                  className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer"
+                >
+                  <option value="1">1 - Very Low</option>
+                  <option value="2">2 - Low</option>
+                  <option value="3">3 - Medium</option>
+                  <option value="4">4 - High</option>
+                  <option value="5">5 - Critical</option>
+                </select>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200">
+                <span className="text-slate-455 font-bold uppercase block mb-0.5">Calculated Score</span>
+                <span className={`inline-flex px-2 py-0.5 text-xs font-technical font-bold rounded-full ${ScoreColors(selectedRisk.riskScore)}`}>
+                  {selectedRisk.riskScore}
+                </span>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200">
+                <span className="text-slate-455 font-bold uppercase block mb-1">Owner</span>
+                <select
+                  value={selectedRisk.ownerId || ''}
+                  onChange={(e) => handleUpdateRisk(selectedRisk.id, { ownerId: Number(e.target.value) })}
+                  className="w-full bg-white border border-slate-202 rounded px-2 py-1 font-semibold cursor-pointer"
+                >
+                  <option value="">Choose owner...</option>
+                  {project.team?.map(m => (
+                    <option key={m.employeeId} value={m.employeeId}>{m.employee?.user?.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <span className="text-slate-455 font-bold uppercase block mb-1 text-xs">Risk Description</span>
+              <textarea
+                rows={3}
+                value={selectedRisk.description || ''}
+                onChange={(e) => setSelectedRisk({ ...selectedRisk, description: e.target.value })}
+                onBlur={(e) => handleUpdateRisk(selectedRisk.id, { description: e.target.value })}
+                placeholder="No description provided..."
+                className="w-full text-xs bg-white border border-slate-202 rounded-lg px-2.5 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+              />
+            </div>
+
+            <div>
+              <span className="text-slate-455 font-bold uppercase block mb-1 text-xs">Mitigation Plan</span>
+              <textarea
+                rows={4}
+                value={selectedRisk.mitigationPlan || ''}
+                onChange={(e) => setSelectedRisk({ ...selectedRisk, mitigationPlan: e.target.value })}
+                onBlur={(e) => handleUpdateRisk(selectedRisk.id, { mitigationPlan: e.target.value })}
+                placeholder="Describe strategies to mitigate this risk..."
+                className="w-full text-xs bg-white border border-slate-202 rounded-lg px-2.5 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+              />
             </div>
           </div>
         )}

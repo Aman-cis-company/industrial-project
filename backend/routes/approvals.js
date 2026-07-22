@@ -194,4 +194,46 @@ router.post('/trigger', protect, async (req, res) => {
   }
 });
 
+// @desc    Add a discussion comment to a workflow
+// @route   POST /api/approvals/:id/comment
+// @access  Private
+router.post('/:id/comment', protect, async (req, res) => {
+  const { commentText } = req.body;
+
+  if (!commentText || !commentText.trim()) {
+    return res.status(400).json({ success: false, message: 'Please provide commentText' });
+  }
+
+  try {
+    const workflow = await ApprovalWorkflow.findByPk(req.params.id);
+    if (!workflow) {
+      return res.status(404).json({ success: false, message: 'Workflow not found' });
+    }
+
+    let comments = [];
+    try {
+      comments = JSON.parse(workflow.discussionComments || '[]');
+    } catch (e) {
+      comments = [];
+    }
+
+    const newComment = {
+      id: Date.now(),
+      userName: req.user.name,
+      userRole: req.user.role,
+      commentText: commentText.trim(),
+      timestamp: new Date().toISOString()
+    };
+
+    comments.push(newComment);
+    await workflow.update({
+      discussionComments: JSON.stringify(comments)
+    });
+
+    res.json({ success: true, data: newComment });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

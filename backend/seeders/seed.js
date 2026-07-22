@@ -205,7 +205,11 @@ const seedDatabase = async () => {
       projectId: 1,
       phaseTrigger: 'Design→Approval',
       name: 'NEOM Spine Phase Transition Gate: Design ➔ Approval',
-      status: 'Approved'
+      status: 'Approved',
+      discussionComments: JSON.stringify([
+        { id: 101, userName: 'Elena Rostova', userRole: 'Project Manager', commentText: 'Design drawings are package complete and uploaded to DMS.', timestamp: '2026-07-15T09:30:00.000Z' },
+        { id: 102, userName: 'Marcus Vance', userRole: 'PMO Director', commentText: 'Looks good. Releasing to the next phase gate.', timestamp: '2026-07-16T14:20:00.000Z' }
+      ])
     });
 
     await ApprovalStep.bulkCreate([
@@ -217,7 +221,11 @@ const seedDatabase = async () => {
       projectId: 4,
       phaseTrigger: 'Approval→Execution',
       name: 'Diriyah Gate Substation Phase Gate: Approval ➔ Execution',
-      status: 'Pending'
+      status: 'Pending',
+      discussionComments: JSON.stringify([
+        { id: 103, userName: 'Carlos Mendez', userRole: 'Engineer', commentText: 'Completed pressure safety check and CP rectifiers review.', timestamp: '2026-07-16T08:45:00.000Z' },
+        { id: 104, userName: 'Elena Rostova', userRole: 'Project Manager', commentText: 'Piping coordinates updated in BIM model. Ready for director sign-off.', timestamp: '2026-07-16T08:58:00.000Z' }
+      ])
     });
 
     await ApprovalStep.bulkCreate([
