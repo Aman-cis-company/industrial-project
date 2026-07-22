@@ -170,6 +170,164 @@ const Dashboard = () => {
     }
   };
 
+  const handleCopyReport = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(aiReportContent);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = aiReportContent;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      addToast('Report copied to clipboard', 'success');
+    } catch (err) {
+      addToast('Failed to copy report to clipboard', 'error');
+    }
+  };
+
+  const handleExportPDF = () => {
+    try {
+      addToast('Preparing PDF export...', 'info');
+
+      const dateStr = new Date().toISOString().split('T')[0];
+      const fileName = `PetroFlow_Executive_PMO_Report_${dateStr}`;
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${fileName}</title>
+          <meta charset="utf-8" />
+          <style>
+            @page { size: A4; margin: 15mm; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+              color: #0F172A;
+              line-height: 1.6;
+              margin: 0;
+              padding: 20px;
+            }
+            .header-bar {
+              border-bottom: 3px solid #0D9488;
+              padding-bottom: 12px;
+              margin-bottom: 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .brand {
+              font-size: 24px;
+              font-weight: 800;
+              color: #0F2A47;
+              letter-spacing: 0.5px;
+            }
+            .sub {
+              font-size: 11px;
+              color: #64748B;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin-top: 2px;
+            }
+            .badge {
+              background-color: #CCFBF1;
+              color: #0F766E;
+              padding: 6px 12px;
+              border-radius: 20px;
+              font-size: 11px;
+              font-weight: bold;
+              border: 1px solid #99F6E4;
+            }
+            .section-header {
+              font-size: 13px;
+              font-weight: 800;
+              color: #0F2A47;
+              margin-top: 18px;
+              margin-bottom: 6px;
+              border-bottom: 1px solid #E2E8F0;
+              padding-bottom: 3px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .body-text {
+              font-size: 12px;
+              color: #334155;
+            }
+            .highlight {
+              color: #0D9488;
+              font-weight: 700;
+            }
+            .footer {
+              margin-top: 30px;
+              border-top: 1px solid #E2E8F0;
+              padding-top: 10px;
+              font-size: 10px;
+              color: #94A3B8;
+              display: flex;
+              justify-content: space-between;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-bar">
+            <div>
+              <div class="brand">🛢️ PetroFlow</div>
+              <div class="sub">Oil & Gas Pipeline PMO & ERP System</div>
+            </div>
+            <div class="badge">CONFIDENTIAL EXECUTIVE REPORT</div>
+          </div>
+
+          <div class="body-text">
+            ${aiReportContent
+              .split('\n')
+              .map(line => {
+                if (!line.trim()) return '';
+                if (line.startsWith('###') || line.startsWith('####')) {
+                  return `<div class="section-header">${line.replace(/#/g, '').trim()}</div>`;
+                }
+                const boldFormatted = line.replace(/\*\*(.*?)\*\*/g, '<span class="highlight">$1</span>');
+                return `<p style="margin: 4px 0;">${boldFormatted}</p>`;
+              })
+              .join('')}
+          </div>
+
+          <div class="footer">
+            <span>PetroFlow AI PMO Copilot Engine</span>
+            <span>Exported: ${new Date().toLocaleString()}</span>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank', 'width=800,height=900');
+      if (printWindow) {
+        printWindow.document.write(printHtml);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          addToast('PDF Print / Save dialog opened', 'success');
+        }, 300);
+      } else {
+        const blob = new Blob([printHtml], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        addToast('Report file downloaded successfully', 'success');
+      }
+    } catch (err) {
+      console.error('PDF export error:', err);
+      addToast('Failed to export PDF report', 'error');
+    }
+  };
+
   if (loading || !summary) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background-dark transition-colors duration-200">
@@ -510,19 +668,13 @@ const Dashboard = () => {
               Close
             </button>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(aiReportContent);
-                addToast('Report copied to clipboard', 'success');
-              }}
+              onClick={handleCopyReport}
               className="px-4 py-2 bg-background dark:bg-background-dark hover:bg-border dark:hover:bg-border-dark text-text-primary dark:text-text-primary-dark text-sm font-semibold rounded-lg cursor-pointer transition-colors duration-200"
             >
               Copy Report
             </button>
             <button
-              onClick={() => {
-                addToast('Generating PDF file...', 'info');
-                setTimeout(() => addToast('Executive_Report_2026.pdf downloaded', 'success'), 1000);
-              }}
+              onClick={handleExportPDF}
               className="px-4 py-2 bg-accent dark:bg-accent-dark hover:bg-accent/90 dark:hover:bg-accent-dark/90 text-white text-sm font-semibold rounded-lg cursor-pointer transition-colors duration-200"
             >
               Export as PDF

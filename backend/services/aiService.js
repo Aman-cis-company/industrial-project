@@ -162,6 +162,42 @@ class AIService {
       answer = `The project with the largest contract value is **${topProj.name}** for **${topProj.clientName}**, valued at **SAR ${parseFloat(topProj.budget).toLocaleString()}**. It is currently in the **${topProj.currentPhase}** phase and is **${topProj.status}** (SAR ${parseFloat(topProj.budgetSpent).toLocaleString()} spent).`;
       matchedProjects = [topProj];
     }
+    else if (
+      queryLower.includes('summarize') ||
+      queryLower.includes('summary') ||
+      queryLower.includes('executive') ||
+      queryLower.includes('pmo status') ||
+      queryLower.includes('overall pmo') ||
+      queryLower.includes('active projects') ||
+      queryLower.includes('report')
+    ) {
+      const activeCount = projects.length;
+      const totalBudget = projects.reduce((acc, p) => acc + parseFloat(p.budget || 0), 0);
+      const totalSpent = projects.reduce((acc, p) => acc + parseFloat(p.budgetSpent || 0), 0);
+      const burnPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+      const atRiskOrDelayed = projects.filter(p => p.status === 'AtRisk' || p.status === 'Delayed');
+      const onTrackCount = projects.filter(p => p.status === 'OnTrack').length;
+      const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      answer = `### 🛢️ PETROFLOW EXECUTIVE PMO STATUS REPORT
+\n**Generated Date:** ${dateStr}
+\n**Auditor:** AI PMO Intelligence Engine
+\n
+\n#### 1. Contract Portfolio Summary
+\nWe currently track **${activeCount} active engineering & pipeline contracts** with a total budget size of **SAR ${totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}**. The cumulative budget spent stands at **SAR ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}**, representing an overall burn rate of **${burnPct}%**.
+\n- **On Track Contracts:** ${onTrackCount}
+\n- **At-Risk / Delayed Contracts:** ${atRiskOrDelayed.length}
+\n
+\n#### 2. Risk & Delay Matrix
+\n${atRiskOrDelayed.length > 0 
+  ? `The following **${atRiskOrDelayed.length} contract(s)** are currently flagged for warning conditions:\n` + atRiskOrDelayed.map(p => `- **${p.name}** (${p.clientName}): Status is **${p.status}**, Phase: ${p.currentPhase}, Spent: SAR ${parseFloat(p.budgetSpent).toLocaleString()} of SAR ${parseFloat(p.budget).toLocaleString()}`).join('\n')
+  : `All active contract parameters remain healthy with zero delay flags logged.`}
+\n
+\n#### 3. Recommended Leveling Actions
+\n- Redirect specialist FTE capacity to support high-risk trunkline segments and valve coordination.
+- Audit upcoming 30-day inspection schedules to maintain 100% compliance across active pipeline assets.`;
+      matchedProjects = projects;
+    }
     else {
       // Generic fallback search across project names
       matchedProjects = projects.filter(p => queryLower.split(' ').some(word => word.length > 3 && p.name.toLowerCase().includes(word)));
