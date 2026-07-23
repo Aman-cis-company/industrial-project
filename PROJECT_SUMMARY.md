@@ -33,38 +33,52 @@ Designed specifically for engineering, construction, and infrastructure operatio
 
 ---
 
-### Key Features & Modules
+### Key Features & Comprehensive Module Breakdown
 
-1. **Executive Dashboard & Analytics**
-   - High-level KPIs: Total Active Projects, Portfolio Budget vs. Actual Spend, Risk Exposure, and Resource Utilization.
-   - Interactive charts for project category distribution, budget breakdown, and timeline milestone progression.
+#### 1. Executive Dashboard & Real-Time PMO Analytics
+- **Portfolio-Wide KPIs**: Immediate visibility into total active project counts, total portfolio valuation, actual spend against assigned budgets, open risk exposures, and resource utilization rates.
+- **Dynamic Visual Charts**: Real-time visual representation of projects categorized by industry (Buildings, Urban Planning, Water Treatment, Power Transmission, Healthcare, BIM).
+- **Executive Reporting**: One-click summary generation highlighting financial health, critical milestones, and overdue task alerts for board-level reporting.
 
-2. **Project Portfolio & Task Management**
-   - Full lifecycle project tracking across sectors (Buildings, Healthcare, Infrastructure, Pipelines).
-   - Milestone scheduling, interactive Gantt visualizer, task allocation, and team member assignments.
+#### 2. Advanced Project Portfolio & Gantt Management
+- **Full Project Lifecycle Tracking**: Manage projects seamlessly from initiation, planning, execution, monitoring, to closing across diverse engineering verticals.
+- **Interactive Milestone & Gantt Scheduling**: Break down projects into critical path milestones, deliverables, and dependencies with progress tracking bars.
+- **Granular Task Management**: Assign tasks to team members with explicit priority tags (Low, Medium, High, Critical), start/end dates, estimated hours, and real-time status updates.
+- **Multi-Disciplinary Team Allocation**: Assign specialized engineers, project managers, and quality auditors directly to individual project teams.
 
-3. **Pipeline Asset & GIS Engineering Management**
-   - Specialized pipeline segment tracking with real-time inspection log updates, maintenance records, and asset risk monitoring.
-   - Interactive GIS map visualization for pipeline routes and asset locations.
+#### 3. Pipeline Engineering, GIS Mapping & Maintenance Hub
+- **Interactive GIS Map Viewer**: Visual spatial tracking of industrial pipelines, segment geometry, geographically tagged assets, and operational status overlay.
+- **Pipeline Segment Management**: Comprehensive attribute tracking including segment length, pipe diameter, material specs, operating pressure, installation dates, and degradation status.
+- **Inspection Logs & Asset Monitoring**: Digital logging of non-destructive testing (NDT), hydrostatic pressure tests, wall thickness measurements, and cathodic protection readings.
+- **Incident Management & Maintenance Records**: Real-time logging of pressure drops, leaks, or maintenance events with work order scheduling and resolution tracking.
 
-4. **Document Hub & AI-Powered OCR Processing**
-   - Repository for engineering drawings, compliance certificates, and contract specifications.
-   - Built-in AI OCR parsing for automated document text extraction and data indexing.
+#### 4. Document Management Hub & Integrated AI OCR Engine
+- **Centralized Document Repository**: Upload and organize blueprints, CAD drawings, technical specs, site survey reports, safety certificates, and client contracts.
+- **AI-Powered OCR Data Extraction**: Built-in Optical Character Recognition (OCR) engine that parses uploaded PDF and image documents automatically to extract text, key clauses, invoice values, and serial numbers.
+- **Document Metadata & Version Control**: Categorize files by project phase, confidentiality level, tag attributes, and search history.
 
-5. **CRM & Business Proposal Pipeline**
-   - Lead management, client profile directory, and proposal status tracking from drafting to approval.
+#### 5. Commercial CRM & Proposal Sales Pipeline
+- **Lead & Client Directory**: Comprehensive management of industrial client accounts, key stakeholders, commercial contracts, and contact histories.
+- **Proposal Lifecycle Management**: Track bid submissions, RFP requirements, estimated contract values, winning probability scores, and current pipeline stages (Draft, Submitted, Under Review, Won, Lost).
+- **Pipeline Revenue Forecasting**: Calculate total expected revenue based on weighted proposal probabilities across industrial consultancy verticals.
 
-6. **Approvals & Governance Workflows**
-   - Multi-step approval chains for engineering design changes, purchase requisitions, and budget adjustments.
+#### 6. Multi-Tier Governance & Approval Workflow Engine
+- **Custom Approval Workflows**: Configure multi-stage sign-offs for high-impact decisions such as scope change requests, engineering design alterations, site expenditure approvals, and safety sign-offs.
+- **Audit-Ready History**: Log complete timestamped approval trails detailing who requested, reviewed, approved, or rejected each operational item along with mandatory review comments.
+- **Pending Action Center**: Centralized inbox for directors and managers to review and resolve all pending organizational approvals in real time.
 
-7. **Employee Directory & Resource Allocation**
-   - Skill inventory, department organization, reporting hierarchy, and workload balance monitoring.
+#### 7. Human Capital & Resource ERP Directory
+- **Employee Profile Directory**: Central hub for employee profiles containing engineering designations, department affiliations, contact information, and skill sets.
+- **Reporting Hierarchy Management**: Built-in manager-employee relationships mapping direct reports, department leads, and PMO organizational structure.
+- **Capacity & Workload Allocation**: Monitor individual staff task loads to prevent burnout and ensure optimal project staffing across active projects.
 
-8. **Risk Exposure & Compliance Auditing**
-   - Qualitative and quantitative risk registers with mitigation strategies and regulatory compliance tracking.
+#### 8. Enterprise Risk Exposure & Regulatory Compliance
+- **Qualitative & Quantitative Risk Register**: Identify project risks, assign impact and probability scores, calculate net risk values, and define contingency plans.
+- **Compliance & Safety Tracking**: Monitor adherence to ISO standards, environmental regulations, industrial safety laws, and local municipal building codes.
+- **Risk Mitigation Action Plans**: Assign specific risk owners and deadline-driven mitigation actions to proactively reduce project vulnerability.
 
 ---
 
 > [!NOTE]
 > **Future Scalability & Customization**:
-> The features outlined above are **not limited**. The platform architecture is modular and highly extensible; any additional custom modules, third-party software integrations, tailored workflows, or extra reports can easily be added in future updates according to your evolving business needs.
+> The features outlined above are **not limited**. The platform architecture is modular and highly extensible; any additional custom modules (e.g., IoT sensor telemetry, custom ERP billing integrations, automated email notifications, advanced AI chat agents), tailored workflows, or extra reports can easily be added in future updates according to your evolving business needs.
