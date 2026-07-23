@@ -9,9 +9,8 @@ const path = require('path');
 const app = express();
 
 // Middleware
-const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173"] : "*";
 app.use(cors({
-  origin: allowedOrigins,
+  origin: process.env.FRONTEND_URL || true,
   credentials: true,
 }));
 app.use(express.json());
