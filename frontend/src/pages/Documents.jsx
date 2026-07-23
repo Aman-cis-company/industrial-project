@@ -175,12 +175,13 @@ const Documents = () => {
       }
     } catch (err) {
       // Mock history list
+      const baseDate = doc.uploadedAt || doc.createdAt || new Date().toISOString();
       setVersionHistory([
-        { id: doc.id, version: doc.version, uploadedAt: doc.uploadedAt, fileSizeKB: doc.fileSizeKB, uploader: doc.uploader, filePath: doc.filePath },
+        { id: doc.id, version: doc.version, uploadedAt: doc.uploadedAt || doc.createdAt, fileSizeKB: doc.fileSizeKB, uploader: doc.uploader, filePath: doc.filePath },
         ...(doc.version > 1 ? Array.from({ length: doc.version - 1 }).map((_, i) => ({
           id: doc.id - i - 1,
           version: doc.version - i - 1,
-          uploadedAt: new Date(new Date(doc.uploadedAt).getTime() - (i+1)*24*60*60*1000).toISOString(),
+          uploadedAt: new Date(new Date(baseDate).getTime() - (i+1)*24*60*60*1000).toISOString(),
           fileSizeKB: Math.round(doc.fileSizeKB * 0.9),
           uploader: doc.uploader,
           filePath: '#'
@@ -290,7 +291,12 @@ const Documents = () => {
       sortable: true,
       render: (row) => (
         <span className="font-technical text-xs text-slate-400">
-          {new Date(row.uploadedAt || row.createdAt).toISOString().split('T')[0]}
+          {(() => {
+            const dateVal = row.uploadedAt || row.createdAt;
+            if (!dateVal) return 'Recent';
+            const d = new Date(dateVal);
+            return isNaN(d.getTime()) ? 'Recent' : d.toISOString().split('T')[0];
+          })()}
         </span>
       )
     }
@@ -504,7 +510,12 @@ const Documents = () => {
                               Version v{ver.version} {isLatest && <strong className="text-[10px] text-teal-600 dark:text-teal-400 ml-1.5 uppercase font-bold">(Latest)</strong>}
                             </span>
                             <span className="font-technical text-[10px] text-slate-400">
-                              {new Date(ver.uploadedAt).toISOString().split('T')[0]}
+                              {(() => {
+                                const dateVal = ver.uploadedAt || ver.createdAt;
+                                if (!dateVal) return 'Recent';
+                                const d = new Date(dateVal);
+                                return isNaN(d.getTime()) ? 'Recent' : d.toISOString().split('T')[0];
+                              })()}
                             </span>
                           </div>
 

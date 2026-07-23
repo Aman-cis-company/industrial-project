@@ -48,13 +48,15 @@ const DataTable = ({
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(row =>
-        columns.some(col => {
+      result = result.filter(row => {
+        const matchCol = columns.some(col => {
           if (!col.accessor) return false;
           const cellValue = getNestedValue(row, col.accessor);
           return cellValue && String(cellValue).toLowerCase().includes(query);
-        })
-      );
+        });
+        const matchDesc = row.description && String(row.description).toLowerCase().includes(query);
+        return matchCol || matchDesc;
+      });
     }
     if (sortConfig.key && sortConfig.direction) {
       result.sort((a, b) => {

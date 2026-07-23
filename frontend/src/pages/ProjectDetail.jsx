@@ -794,12 +794,13 @@ const ProjectDetail = () => {
         throw new Error(data.message);
       }
     } catch (err) {
+      const baseDate = doc.uploadedAt || doc.createdAt || new Date().toISOString();
       setVersionHistory([
-        { id: doc.id, version: doc.version, uploadedAt: doc.uploadedAt, fileSizeKB: doc.fileSizeKB, uploader: doc.uploader, filePath: doc.filePath },
+        { id: doc.id, version: doc.version, uploadedAt: doc.uploadedAt || doc.createdAt, fileSizeKB: doc.fileSizeKB, uploader: doc.uploader, filePath: doc.filePath },
         ...(doc.version > 1 ? Array.from({ length: doc.version - 1 }).map((_, i) => ({
           id: doc.id - i - 1,
           version: doc.version - i - 1,
-          uploadedAt: new Date(new Date(doc.uploadedAt).getTime() - (i+1)*24*60*60*1000).toISOString(),
+          uploadedAt: new Date(new Date(baseDate).getTime() - (i+1)*24*60*60*1000).toISOString(),
           fileSizeKB: Math.round(doc.fileSizeKB * 0.9),
           uploader: doc.uploader,
           filePath: '#'
@@ -1493,9 +1494,61 @@ const ProjectDetail = () => {
                   <input type="file" onChange={onFileSelect} className="absolute inset-0 opacity-0 cursor-pointer" />
                   <UploadCloud className="w-8 h-8 mx-auto text-slate-400 mb-2" />
                   <p className="text-xs font-semibold text-slate-755 dark:text-slate-300">Drag files here or click to browse</p>
-                  {uploadedFile && <p className="text-[10px] text-emerald-600 font-semibold mt-2">{uploadedFile.name}</p>}
+                  {uploadedFile && (
+                    <div className="mt-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded px-2.5 py-1 text-[10px] text-emerald-700 dark:text-emerald-450 font-bold inline-block truncate max-w-full">
+                      ✓ {uploadedFile.name}
+                    </div>
+                  )}
                 </div>
-                <button type="submit" disabled={uploading || !uploadedFile} className={`w-full py-2 rounded-lg text-xs font-semibold text-white ${!uploadedFile ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-accent hover:bg-accent-hover'}`}>{uploading ? 'Committing...' : 'Commit Upload'}</button>
+
+                {uploadedFile && (
+                  <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-850 rounded-xl border border-slate-100 dark:border-slate-800 animate-slide-down">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
+                        Discipline / Category *
+                      </label>
+                      <select
+                        value={uploadForm.discipline}
+                        onChange={(e) => setUploadForm({ ...uploadForm, discipline: e.target.value })}
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-900 dark:text-white cursor-pointer font-semibold"
+                      >
+                        <option value="General">General</option>
+                        <option value="BIM">BIM (Building Info Model)</option>
+                        <option value="Piping">Piping / Alignment</option>
+                        <option value="Civil">Civil / Structural</option>
+                        <option value="Mechanical">Mechanical / HVAC</option>
+                        <option value="Electrical">Electrical Cabling</option>
+                        <option value="Instrumentation">Instrumentation / SCADA</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
+                        Document Summary / Description *
+                      </label>
+                      <textarea
+                        required
+                        rows={3}
+                        value={uploadForm.description}
+                        onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
+                        placeholder="e.g. Approved layout for refinery crude pipeline valves."
+                        className="w-full text-xs bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-lg px-2.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 font-semibold"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={uploading || !uploadedFile}
+                  className={`w-full py-2 rounded-lg text-xs font-semibold text-white cursor-pointer transition-colors shadow-sm select-none border border-transparent ${
+                    !uploadedFile
+                      ? 'bg-slate-200 text-slate-450 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed'
+                      : 'bg-accent hover:bg-accent-hover text-white'
+                  }`}
+                >
+                  {uploading ? 'Committing...' : 'Commit Upload'}
+                </button>
               </form>
             </div>
           </div>
@@ -1959,7 +2012,12 @@ const ProjectDetail = () => {
                         Version v{ver.version} {idx === 0 && <strong className="text-[10px] text-teal-600 font-bold ml-1 uppercase">(Latest)</strong>}
                       </span>
                       <span className="font-technical text-[10px] text-slate-400">
-                        {ver.uploadedAt ? (typeof ver.uploadedAt === 'string' ? ver.uploadedAt.split('T')[0] : new Date(ver.uploadedAt).toISOString().split('T')[0]) : 'Recent'}
+                        {(() => {
+                          const dateVal = ver.uploadedAt || ver.createdAt;
+                          if (!dateVal) return 'Recent';
+                          const d = new Date(dateVal);
+                          return isNaN(d.getTime()) ? 'Recent' : d.toISOString().split('T')[0];
+                        })()}
                       </span>
                     </div>
 
