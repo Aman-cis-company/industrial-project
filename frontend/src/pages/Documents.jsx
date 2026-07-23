@@ -61,6 +61,7 @@ const Documents = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
+  const ocrPollRef = React.useRef(null);
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -158,6 +159,31 @@ const Documents = () => {
     fetchAllData();
   }, [token, apiUrl]);
 
+  // Background OCR polling — silently re-fetches every 4s while any doc has the ⏳ placeholder
+  useEffect(() => {
+    const hasPending = documents.some(d => d.description && d.description.startsWith('⏳'));
+    if (hasPending && !ocrPollRef.current) {
+      ocrPollRef.current = setInterval(async () => {
+        try {
+          const res = await fetch(`${apiUrl}/documents`, { headers: { Authorization: `Bearer ${token}` } });
+          const data = await res.json();
+          if (data.success) {
+            setDocuments(data.data);
+            const stillPending = data.data.some(d => d.description && d.description.startsWith('⏳'));
+            if (!stillPending) {
+              clearInterval(ocrPollRef.current);
+              ocrPollRef.current = null;
+            }
+          }
+        } catch (_) { /* silent */ }
+      }, 4000);
+    } else if (!hasPending && ocrPollRef.current) {
+      clearInterval(ocrPollRef.current);
+      ocrPollRef.current = null;
+    }
+    return () => {};
+  }, [documents, token, apiUrl]);
+
   // Version history fetcher
   const openHistoryDrawer = async (doc) => {
     setSelectedDoc(doc);
@@ -232,7 +258,16 @@ const Documents = () => {
               <p className="font-semibold text-slate-850 dark:text-white group-hover:underline leading-tight truncate">
                 {row.fileName}
               </p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1">{row.description || 'No description'}</p>
+              {row.description && row.description.startsWith('⏳') ? (
+                <span className="inline-flex items-center gap-1 text-[10px] text-amber-500 font-semibold mt-0.5 animate-pulse">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 inline-block animate-ping" />
+                  OCR indexing in background...
+                </span>
+              ) : (
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1">
+                  {row.description ? row.description.split(' | ')[0] : 'No description'}
+                </p>
+              )}
             </div>
           </div>
         );
@@ -441,7 +476,13 @@ const Documents = () => {
                   <h4 className="text-xs font-bold text-slate-850 dark:text-white mt-4 hover:underline line-clamp-2 leading-snug">
                     {doc.fileName}
                   </h4>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 line-clamp-1">{doc.description || 'No description'}</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 line-clamp-1">
+                    {doc.description && doc.description.startsWith('⏳') ? (
+                      <span className="text-amber-500 animate-pulse font-semibold">⏳ OCR indexing...</span>
+                    ) : (
+                      doc.description ? doc.description.split(' | ')[0] : 'No description'
+                    )}
+                  </p>
                   
                   <span className="inline-block mt-3 text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 px-2 py-0.5 rounded uppercase">
                     {doc.discipline}
@@ -481,7 +522,15 @@ const Documents = () => {
               <h3 className="text-sm font-bold text-slate-900 dark:text-white mt-2 leading-snug">
                 {selectedDoc.fileName}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">{selectedDoc.description || 'No description logs registered.'}</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {selectedDoc.description ? selectedDoc.description.split(' | ')[0] : 'No description logs registered.'}
+              </p>
+              {selectedDoc.description && selectedDoc.description.includes(' | ') && (
+                <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-850 rounded-lg border border-slate-100 dark:border-slate-800 text-[10px] text-slate-500 font-technical whitespace-pre-wrap max-h-40 overflow-y-auto">
+                  <span className="block font-bold uppercase text-[9px] text-slate-400 mb-1">OCR Smart Index Text</span>
+                  {selectedDoc.description.split(' | ')[1]}
+                </div>
+              )}
             </div>
 
             {/* Version timeline tree */}

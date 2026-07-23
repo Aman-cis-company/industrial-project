@@ -328,7 +328,7 @@ const Projects = () => {
       )
     },
     {
-      header: 'Budget Performance (SAR)',
+      header: 'Budget Performance ($)',
       accessor: 'budget',
       sortable: true,
       render: (row) => {
@@ -688,11 +688,11 @@ const Projects = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                Contract Budget (SAR) *
+                Contract Budget ($) *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs font-bold">
-                  SAR
+                  $
                 </div>
                 <input
                   type="number"

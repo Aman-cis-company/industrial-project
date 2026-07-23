@@ -155,7 +155,7 @@ const Dashboard = () => {
       \n**Auditor:** PMO Copilot Engine
       \n
       \n#### 1. Contract Portfolio Summary
-      \nWe currently track **7 active engineering contracts** with a total budget size of **SAR 181,700,000**. The total budget spent stands at **SAR 72,400,000**, showing an aggregate burn rate of **40%**. This is well within initial control limits.
+      \nWe currently track **7 active engineering contracts** with a total budget size of **$181,700,000**. The total budget spent stands at **$72,400,000**, showing an aggregate burn rate of **40%**. This is well within initial control limits.
       \n
       \n#### 2. Risk & Delay Matrix
       \nTwo projects are currently flagged for warning conditions:
@@ -420,7 +420,7 @@ const Dashboard = () => {
         {/* Budget Burn */}
         <div className="bg-gradient-to-br from-white to-amber-50/30 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">Budget Utilization (SAR)</span>
+            <span className="text-xs font-semibold text-text-muted dark:text-text-muted-dark">Budget Utilization ($)</span>
             <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
               <DollarSign className="w-5 h-5" strokeWidth={1.5} />
             </div>
@@ -523,7 +523,7 @@ const Dashboard = () => {
         {/* Budget Burn Line Chart */}
         <div className="bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-xl p-5 shadow-sm space-y-4 transition-colors duration-200">
           <h3 className="text-xs font-bold text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
-            Cumulative Budget Burn Trend (SAR)
+            Cumulative Budget Burn Trend ($)
           </h3>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -532,7 +532,7 @@ const Dashboard = () => {
                 <XAxis dataKey="month" tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} />
                 <YAxis tick={{ fontSize: 9, fill: 'var(--color-text-muted)' }} formatter={(v) => `$${(v/1000000).toFixed(0)}M`} />
                 <Tooltip
-                  formatter={(v) => [`SAR ${Number(v).toLocaleString()}`, 'Spent Cumulative']}
+                  formatter={(v) => [`$${Number(v).toLocaleString()}`, 'Spent Cumulative']}
                   contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
                 />
                 <Line type="monotone" dataKey="budgetBurn" stroke="#2DD4BF" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
@@ -583,7 +583,7 @@ const Dashboard = () => {
                       <td className="py-3">
                         <div className="w-28 mx-auto space-y-1">
                           <div className="flex justify-between text-[9px] font-technical font-bold text-text-muted dark:text-text-muted-dark">
-                            <span>SAR {(proj.budgetSpent/1000000).toFixed(1)}M</span>
+                            <span>${(proj.budgetSpent/1000000).toFixed(1)}M</span>
                             <span>{pct}%</span>
                           </div>
                           <div className="w-full bg-border dark:bg-border-dark h-1 rounded-full overflow-hidden">

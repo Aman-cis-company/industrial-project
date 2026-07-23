@@ -116,15 +116,15 @@ const AIAssistant = () => {
         
         if (text.toLowerCase().includes('risk') || text.toLowerCase().includes('delayed')) {
           textResponse = `I found **2 projects** currently flagged as At-Risk or Delayed:
-          \n- **Aramco Admin Complex HVAC Refit** (Status: **AtRisk**, Budget: SAR 8.4M)
-          \n- **Diriyah Gate Historic Substation Integration** (Status: **Delayed**, Budget: SAR 18.2M)
+          \n- **Aramco Admin Complex HVAC Refit** (Status: **AtRisk**, Budget: $8.4M)
+          \n- **Diriyah Gate Historic Substation Integration** (Status: **Delayed**, Budget: $18.2M)
           \n\nI recommend reviewing the active Risk Logs for excavation parameters and subcontractor delay factors.`;
         } else if (text.toLowerCase().includes('water') || text.toLowerCase().includes('desalination')) {
           textResponse = `I found **2 active Water and Wastewater Treatment contracts** in the database directory:
           \n- **Jeddah Central Seawater Desalination Plant** (Status: **OnTrack**, Phase: **Design**)
           \n- **Riyadh South Biological Wastewater Plant** (Status: **OnTrack**, Phase: **Execution**)`;
         } else if (text.toLowerCase().includes('expensive') || text.toLowerCase().includes('value') || text.toLowerCase().includes('budget')) {
-          textResponse = `The project with the largest contract value is **Riyadh South Biological Wastewater Plant** for the **Ministry of Health**, valued at **SAR 52,000,000**. It is currently in the **Execution** phase and is **On Track** (SAR 28,300,000 spent).`;
+          textResponse = `The project with the largest contract value is **Riyadh South Biological Wastewater Plant** for the **Ministry of Health**, valued at **$52,000,000**. It is currently in the **Execution** phase and is **On Track** ($28,300,000 spent).`;
         } else if (text.toLowerCase().includes('draft') || text.toLowerCase().includes('proposal')) {
           textResponse = `### MOCK PROPOSAL DRAFT OUTLINE
           \n**Prepared For:** NEOM Authority

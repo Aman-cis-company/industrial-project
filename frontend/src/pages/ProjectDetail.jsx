@@ -1091,7 +1091,9 @@ const ProjectDetail = () => {
             <div className={`p-2 rounded-lg ${style.color} shrink-0`}><Icon className="w-5 h-5" /></div>
             <div>
               <p className="font-semibold text-slate-850 dark:text-white group-hover:underline leading-tight">{row.fileName}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{row.description}</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                {row.description ? row.description.split(' | ')[0] : ''}
+              </p>
             </div>
           </div>
         );
@@ -1354,7 +1356,7 @@ const ProjectDetail = () => {
               </div>
 
               <div className="bg-white dark:bg-slate-900 border border-slate-202 rounded-xl p-5 shadow-sm space-y-4">
-                <h3 className="text-sm font-bold text-slate-850 dark:text-white flex items-center gap-1"><DollarSign className="w-5 h-5 text-teal-500" />Financial Status (SAR)</h3>
+                <h3 className="text-sm font-bold text-slate-855 dark:text-white flex items-center gap-1"><DollarSign className="w-5 h-5 text-teal-500" />Financial Status ($)</h3>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-semibold"><span className="text-slate-400">Total Spent</span><span className="text-slate-850 dark:text-white font-technical font-bold">{budgetRatio}% used</span></div>
                   <p className="text-2xl font-bold font-technical tracking-tight text-slate-950 dark:text-white">${spentVal.toLocaleString()}</p>
@@ -1524,16 +1526,18 @@ const ProjectDetail = () => {
 
                     <div>
                       <label className="block text-[10px] font-bold uppercase text-slate-455 mb-1 font-technical">
-                        Document Summary / Description *
+                        Document Summary / Description (Optional)
                       </label>
                       <textarea
-                        required
                         rows={3}
                         value={uploadForm.description}
                         onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
-                        placeholder="e.g. Approved layout for refinery crude pipeline valves."
+                        placeholder="Leave blank to run auto OCR text extraction..."
                         className="w-full text-xs bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-lg px-2.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 font-semibold"
                       />
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 block mt-1 font-sans">
+                        💡 If left blank, our smart OCR backend will automatically scan and index text from your PDF or Image drawing file.
+                      </span>
                     </div>
                   </div>
                 )}
@@ -1647,7 +1651,7 @@ const ProjectDetail = () => {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Budget (SAR)</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Budget ($)</label>
             <input type="number" required value={editFormData.budget} onChange={e => setEditFormData({ ...editFormData, budget: e.target.value })} className="w-full bg-white border border-slate-202 rounded-lg px-3 py-2 text-sm text-slate-900 font-technical" />
           </div>
         </form>
@@ -2001,6 +2005,15 @@ const ProjectDetail = () => {
             <div>
               <span className="text-[10px] font-bold text-teal-650 uppercase bg-teal-50 px-2 py-0.5 rounded">{selectedDoc.discipline} Discipline</span>
               <h3 className="text-sm font-bold text-slate-900 mt-2 leading-snug">{selectedDoc.fileName}</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                {selectedDoc.description ? selectedDoc.description.split(' | ')[0] : 'No description logs registered.'}
+              </p>
+              {selectedDoc.description && selectedDoc.description.includes(' | ') && (
+                <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-850 rounded-lg border border-slate-100 dark:border-slate-800 text-[10px] text-slate-500 font-technical whitespace-pre-wrap max-h-40 overflow-y-auto">
+                  <span className="block font-bold uppercase text-[9px] text-slate-400 mb-1">OCR Smart Index Text</span>
+                  {selectedDoc.description.split(' | ')[1]}
+                </div>
+              )}
             </div>
             <div className="relative pl-6 space-y-5 border-l border-slate-200">
               {versionHistory.map((ver, idx) => (

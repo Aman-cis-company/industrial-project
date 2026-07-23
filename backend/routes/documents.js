@@ -96,7 +96,7 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
     const originalName = req.file.originalname;
     const ext = path.extname(originalName).toLowerCase().replace('.', '');
     const userEmployee = await Employee.findOne({ where: { userId: req.user.id } });
-    const uploadedById = userEmployee ? userEmployee.id : 1; // default fallback
+    const uploadedById = userEmployee ? userEmployee.id : 1;
 
     // Find the latest version of this document name inside the project
     const latestDoc = await Document.findOne({
@@ -109,7 +109,11 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
     const relativePath = path.relative(path.join(__dirname, '..'), req.file.path);
     const webFilePath = '/' + relativePath.replace(/\\/g, '/');
 
-    // Create the document record
+    // Use the user-provided description, or a placeholder while OCR runs in background
+    const needsOcr = !description || !description.trim();
+    const initialDescription = needsOcr ? '⏳ Extracting text index...' : description;
+
+    // PHASE 1 — Create the document record immediately and respond to the client
     const document = await Document.create({
       projectId,
       fileName: originalName,
@@ -118,25 +122,50 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
       version: nextVersion,
       uploadedById,
       discipline: discipline || 'General',
-      description: description || '',
+      description: initialDescription,
       fileSizeKB: Math.round(req.file.size / 1024)
     });
 
     const fullDoc = await Document.findByPk(document.id, {
       include: [
-        { 
-          model: Employee, 
-          as: 'uploader', 
+        {
+          model: Employee,
+          as: 'uploader',
           include: [{ model: User, as: 'user', attributes: ['name'] }]
         }
       ]
     });
 
+    // Respond instantly — client gets the record with version right away
     res.status(201).json({ success: true, data: fullDoc });
+
+    // PHASE 2 — Run OCR in the background (non-blocking, after response is sent)
+    if (needsOcr) {
+      setImmediate(async () => {
+        try {
+          const ocrService = require('../services/ocrService');
+          const extractedText = await ocrService.extractText(req.file.path, ext);
+          await Document.update(
+            { description: extractedText },
+            { where: { id: document.id } }
+          );
+          console.log(`[OCR] Background extraction complete for document id=${document.id}`);
+        } catch (ocrErr) {
+          console.error(`[OCR] Background extraction failed for document id=${document.id}:`, ocrErr.message);
+          // Update with a clean fallback so the placeholder is replaced
+          await Document.update(
+            { description: 'Uploaded document (OCR unavailable)' },
+            { where: { id: document.id } }
+          ).catch(() => {});
+        }
+      });
+    }
+
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
 
 // @desc    Get document version history
 // @route   GET /api/documents/:id/history

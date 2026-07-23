@@ -22,8 +22,8 @@ class AIService {
           Client: ${project.clientName}
           Phase: ${project.currentPhase}
           Status: ${project.status}
-          Budget: SAR ${project.budget}
-          Spent: SAR ${project.budgetSpent}
+          Budget: $${project.budget}
+          Spent: $${project.budgetSpent}
           Tasks count: ${project.tasks?.length || 0}
           Risks count: ${project.risks?.length || 0}
           
@@ -47,9 +47,9 @@ class AIService {
     let summaryText = `The **${project.name}** contract for **${project.clientName}** is currently in the **${project.currentPhase}** phase and is flagged as **${project.status}**. `;
     
     if (project.status === 'OnTrack') {
-      summaryText += `Financially, the project remains highly efficient, with only SAR ${parseFloat(project.budgetSpent).toLocaleString()} spent out of the total SAR ${parseFloat(project.budget).toLocaleString()} budget (${budgetPct}% burn rate). `;
+      summaryText += `Financially, the project remains highly efficient, with only $${parseFloat(project.budgetSpent).toLocaleString()} spent out of the total $${parseFloat(project.budget).toLocaleString()} budget (${budgetPct}% burn rate). `;
     } else {
-      summaryText += `The budget utilization has reached ${budgetPct}% (SAR ${parseFloat(project.budgetSpent).toLocaleString()} of SAR ${parseFloat(project.budget).toLocaleString()}), representing a compressed margin. `;
+      summaryText += `The budget utilization has reached ${budgetPct}% ($${parseFloat(project.budgetSpent).toLocaleString()} of $${parseFloat(project.budget).toLocaleString()}), representing a compressed margin. `;
     }
 
     if (activeTasks.length > 0) {
@@ -137,7 +137,7 @@ class AIService {
       
       if (matchedProjects.length > 0) {
         answer = `I found **${matchedProjects.length} projects** currently flagged as At-Risk or Delayed: \n\n` +
-          matchedProjects.map(p => `- **${p.name}** (${p.clientName}): Currently in **${p.currentPhase}** phase, status is **${p.status}** with a budget of SAR ${parseFloat(p.budget).toLocaleString()}.`).join('\n') +
+          matchedProjects.map(p => `- **${p.name}** (${p.clientName}): Currently in **${p.currentPhase}** phase, status is **${p.status}** with a budget of $${parseFloat(p.budget).toLocaleString()}.`).join('\n') +
           `\n\nI recommend reviewing the respective active Risk Logs and scheduling resource leveling.`;
       } else {
         answer = `All active PMO projects are currently **On Track**. No delays or at-risk flags are logged in the database.`;
@@ -159,7 +159,7 @@ class AIService {
       const sorted = [...projects].sort((a, b) => b.budget - a.budget);
       const topProj = sorted[0];
       
-      answer = `The project with the largest contract value is **${topProj.name}** for **${topProj.clientName}**, valued at **SAR ${parseFloat(topProj.budget).toLocaleString()}**. It is currently in the **${topProj.currentPhase}** phase and is **${topProj.status}** (SAR ${parseFloat(topProj.budgetSpent).toLocaleString()} spent).`;
+      answer = `The project with the largest contract value is **${topProj.name}** for **${topProj.clientName}**, valued at **$${parseFloat(topProj.budget).toLocaleString()}**. It is currently in the **${topProj.currentPhase}** phase and is **${topProj.status}** ($${parseFloat(topProj.budgetSpent).toLocaleString()} spent).`;
       matchedProjects = [topProj];
     }
     else if (
@@ -184,13 +184,13 @@ class AIService {
 \n**Auditor:** AI PMO Intelligence Engine
 \n
 \n#### 1. Contract Portfolio Summary
-\nWe currently track **${activeCount} active engineering & pipeline contracts** with a total budget size of **SAR ${totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}**. The cumulative budget spent stands at **SAR ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}**, representing an overall burn rate of **${burnPct}%**.
+\nWe currently track **${activeCount} active engineering & pipeline contracts** with a total budget size of **$${totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}**. The cumulative budget spent stands at **$${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}**, representing an overall burn rate of **${burnPct}%**.
 \n- **On Track Contracts:** ${onTrackCount}
 \n- **At-Risk / Delayed Contracts:** ${atRiskOrDelayed.length}
 \n
 \n#### 2. Risk & Delay Matrix
 \n${atRiskOrDelayed.length > 0 
-  ? `The following **${atRiskOrDelayed.length} contract(s)** are currently flagged for warning conditions:\n` + atRiskOrDelayed.map(p => `- **${p.name}** (${p.clientName}): Status is **${p.status}**, Phase: ${p.currentPhase}, Spent: SAR ${parseFloat(p.budgetSpent).toLocaleString()} of SAR ${parseFloat(p.budget).toLocaleString()}`).join('\n')
+  ? `The following **${atRiskOrDelayed.length} contract(s)** are currently flagged for warning conditions:\n` + atRiskOrDelayed.map(p => `- **${p.name}** (${p.clientName}): Status is **${p.status}**, Phase: ${p.currentPhase}, Spent: $${parseFloat(p.budgetSpent).toLocaleString()} of $${parseFloat(p.budget).toLocaleString()}`).join('\n')
   : `All active contract parameters remain healthy with zero delay flags logged.`}
 \n
 \n#### 3. Recommended Leveling Actions

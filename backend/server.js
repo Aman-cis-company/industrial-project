@@ -9,9 +9,9 @@ const path = require('path');
 const app = express();
 
 // Middleware
-// app.use(cors());
+const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173"] : "*";
 app.use(cors({
-  origin: "http://localhost:5173", // Your React app URL
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());

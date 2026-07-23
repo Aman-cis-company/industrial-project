@@ -379,9 +379,9 @@ const Proposals = () => {
                 <DollarSign className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-450 block">Total Pipeline Value</span>
+                <span className="text-xs font-bold text-slate-455 block">Total Pipeline Value</span>
                 <span className="text-2xl font-bold font-technical text-slate-900 dark:text-white block mt-1">
-                  SAR {pipelineData.totalValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  $ {pipelineData.totalValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
             </div>
@@ -405,9 +405,9 @@ const Proposals = () => {
                 <Sparkles className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-450 block">Won Contract Values</span>
+                <span className="text-xs font-bold text-slate-455 block">Won Contract Values</span>
                 <span className="text-2xl font-bold font-technical text-slate-900 dark:text-white block mt-1">
-                  SAR {pipelineData.wonValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  $ {pipelineData.wonValue?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
             </div>
@@ -480,7 +480,7 @@ const Proposals = () => {
 
                         <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
                           <span className="font-technical font-extrabold text-slate-700 dark:text-slate-300">
-                            SAR {(prop.estimatedValue / 1000000).toFixed(1)}M
+                            $ {(prop.estimatedValue / 1000000).toFixed(1)}M
                           </span>
                           
                           {/* Shift stages select */}
@@ -639,7 +639,7 @@ const Proposals = () => {
 
             <div>
               <label className="form-label">
-                Estimated Contract Value (SAR) *
+                Estimated Contract Value ($) *
               </label>
               <input
                 type="number"
@@ -707,7 +707,7 @@ const Proposals = () => {
                         <p className="font-bold text-slate-800 dark:text-white hover:underline cursor-pointer" onClick={() => { setIsClientDrawerOpen(false); navigate(`/projects/${proj.id}`); }}>
                           {proj.name}
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">Budget: SAR {parseFloat(proj.budget).toLocaleString()}</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Budget: $ {parseFloat(proj.budget).toLocaleString()}</p>
                       </div>
                       <span className="scale-75"><StatusBadge status={proj.status} /></span>
                     </div>
@@ -733,7 +733,7 @@ const Proposals = () => {
                     <div key={prop.id} className="p-3 bg-white dark:bg-slate-900 flex justify-between items-center text-xs">
                       <div>
                         <p className="font-bold text-slate-800 dark:text-white">{prop.title}</p>
-                        <p className="text-[10px] font-technical font-semibold text-slate-400 mt-0.5">Est. Value: SAR {parseFloat(prop.estimatedValue).toLocaleString()}</p>
+                        <p className="text-[10px] font-technical font-semibold text-slate-400 mt-0.5">Est. Value: $ {parseFloat(prop.estimatedValue).toLocaleString()}</p>
                       </div>
                       <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-500`}>
                         {prop.status}
