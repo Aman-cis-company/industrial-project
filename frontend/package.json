@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "vite preview --host 0.0.0.0 --port ${PORT:-3000}",
-    "serve": "serve -s dist -l ${PORT:-3000}",
+    "start": "vite preview --host 0.0.0.0 --port $PORT",
+    "serve": "serve -s dist -l $PORT",
     "lint": "oxlint",
     "preview": "vite preview"
   },
