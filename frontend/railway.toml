@@ -4,4 +4,4 @@ builder = "NIXPACKS"
 buildCommand = "npm install && npm run build"
 
 [deploy]
-startCommand = "npx serve -s dist -l $PORT --single"
+startCommand = "npm run preview -- --host 0.0.0.0 --port $PORT"
